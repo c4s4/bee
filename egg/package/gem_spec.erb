@@ -1,0 +1,26 @@
+require 'rubygems'
+
+remove_const(:SPEC) if defined?(SPEC)
+
+SPEC = Gem::Specification.new do |spec|
+  spec.name = '<%= name %>'
+  spec.version = '<%= version %>'
+  spec.author = '<%= author %>'
+  spec.email = '<%= email %>'
+  spec.homepage = '<%= homepage %>'
+  spec.rubyforge_project = '<%= rubyforge %>'
+  spec.platform = <%= platform %>
+  spec.summary = '<%= summary %>'
+  spec.description = '<%= description %>'
+  spec.files = Dir.glob('{lib,test,egg}/**/*').delete_if do |file|
+    file =~ /CVS/
+  end
+  spec.require_path = '<%= lib_dir %>'
+  spec.test_file = 'test/ts_<%= name %>.rb'
+  spec.has_rdoc = true
+  spec.extra_rdoc_files = ['<%= readme_file %>', '<%= license_file %>']
+<% for key in dependencies.keys.sort %>
+  spec.add_dependency("<%= key %>", <%= dependencies[key].inspect %>)
+<% end %>
+  spec.post_install_message = 'Enjoy bee!'
+end

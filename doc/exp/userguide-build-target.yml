@@ -1,0 +1,9 @@
+- target: test
+  depends: hello
+  description: "Test target"
+  script:
+  - print: "This is a test"
+
+- target: hello
+  description: "Say hello"
+  script: 'echo "Hello!"'

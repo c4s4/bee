@@ -1,0 +1,3 @@
+- target: broken
+  script:
+  - "foo"

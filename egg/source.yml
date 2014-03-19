@@ -1,0 +1,44 @@
+- build:       source
+  default:     all
+  description: Generate a sample Ruby source file
+
+- properties:
+    name:        source.rb
+    description: This script will generate a sample Ruby source file.
+
+- target:      welcome
+  description: Print information message
+  script:
+  - print: :description
+
+- target:      prompt
+  depends:     welcome
+  description: Prompt for project information
+  script:
+  - print: "Please answer following questions to generate the project:"
+  - prompt:
+      message: "What is the source file name?"
+      default: :name
+      property: name
+
+- target:      generate
+  depends:     prompt
+  description: Generate source
+  script:
+  - print: "Generating source..."
+  - erb:
+      src:  "#{base}/source/source.rb"
+      dest: "#{here}/#{name}"
+  - if: "RUBY_PLATFORM.split('-')[1] != 'mswin32'"
+    then:
+    - chmod: { files: "#{here}/#{name}", mode: 0755 }
+
+- target:      customization
+  depends:     generate
+  description: Print information about project customization
+  script:
+  - print: Source file '#{name}' has been generated in this directory.
+
+- target:  all
+  depends: [welcome, prompt, generate, customization]
+

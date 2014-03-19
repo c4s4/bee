@@ -1,0 +1,134 @@
+<!--
+Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This documentation is intended for people who want to compile Bee from
+sources. You may, this way, compile latest version from repository.</p>
+
+<h2>Install Ruby</h2>
+
+<p>To compile Bee, you must install a Ruby virtual machine.</p>
+
+<h3>Unix and MacOSX users</h3>
+
+<p>Check that Ruby is not already installed on your system, typing 
+<tt>ruby</tt>. It is installed on many systems (including MacOSX and
+some Linux distributions) and you should not have to install it.</p>
+
+<p>If Ruby is not already installed, try installing it using your
+package system (such as apt-get, typing <tt>sudo apt-get install
+ruby</tt>).</p>
+
+<p>If you prefer to compile Ruby from sources, you may download them
+on <a href="http://www.ruby-lang.org">Ruby web site</a>. You should
+install a virtual machine in version <i>1.8</i> and avoid <i>1.9</i>
+versions as Bee doesn't work yet on this experimental branch.</p>
+
+<p>You must then install RubyGems which is a package system for Ruby.
+It enables you to install Ruby libraries or tools with a single
+command line (very similar to apt-get). It should be possible to
+install it using your package system or downloading it from
+<a href="http://www.rubygems.org/">Ruby Gem home page</a>. Unpack the
+distribution archive, go in resulting directory and type 
+<tt>sudo ruby setup.rb</tt>.</p>
+
+<h3>Windows users</h3>
+
+<p>For Windows user, I strongly recommend installing the
+<a href="http://www.rubyinstaller.org/">Ruby Installer</a> in version
+<i>1.8.7-p330</i> (latest 1.8 stable release). It also works with release
+<i>1.8.6-27_rc2</i> but I had trouble with version, <i>1.8.6-p383-rc1</i>,
+which produces an error running <i>gem</i> and with previous ones, while
+running unit tests.</p>
+
+<p>To be able to build native Ruby gems on Windows (such as <tt>rcov</tt>
+for instance), you should <a href="http://rubyinstaller.org/downloads"
+target="_blank">install DevKit</a>. Here is a page with
+<a href="https://github.com/oneclick/rubyinstaller/wiki/Development-Kit"
+target="_blank">installation instructions</a>. I used DevKit successfuly
+in version <i>4.5.1</i>.</p>
+
+<p>When you have installed Ruby, you must then install Bee dependencies:</p>
+
+<h2>Bee dependencies</h2>
+
+<p>To install Bee runtime dependencies use RubyGem typing following command
+lines:</p>
+
+<pre>
+sudo gem install rubyzip archive-tar-minitar highline
+</pre>
+
+<p>There are other dependencies needed to build Bee documentation (that
+are not needed to run Bee itself) and run unit tests:</p>
+
+<pre>
+sudo gem install highline rcov sinatra syntax
+</pre>
+
+<p>Bee was developed using following dependencies:</p>
+
+<pre>
+archive-tar-minitar (0.5.2)
+highline (1.6.19, 1.6.16)
+mocha (0.14.0)
+rcov (1.0.0)
+rubyzip (0.9.9)
+sinatra (1.4.2)
+syntax (1.0.0)
+</pre>
+
+<p><b>Note:</b> latest Ruby versions (such as <i>1.8.7</i>) don't run rcov
+correctly because of a change in rexml. Rcov hasn't been updated yet
+but a forked version exists to fix this issue. You can find this 
+versions at 
+<a href="http://github.com/spicycode/rcov/tree/master">Spicycode</a>.
+This site doesn't provide a gem, thus you will have to download the
+archive, expand it and run <tt>ruby setup.rb</tt> in created 
+directory.</p>
+
+<h2>Compile sources</h2>
+
+<p>To get latest source files, you should checkout Bee project from
+CVS repository. To do so, please refer to 
+<a href="http://rubyforge.org/scm/?group_id=2479">SCM documentation page</a>
+on Bee project's page on RubyForge.</p>
+
+<p>Go into extracted directory and type:</p>
+
+<pre>
+bin/bee gem
+</pre>
+
+<p>This will build the gem archive in <i>build</i> directory. You may
+then install Bee (using RubyGems) typing:</p>
+
+<pre>
+sudo gem install build/bee-X.Y.Z.gem
+</pre>
+
+<p>Unix users can then build distribution archive typing:</p>
+
+<pre>
+bee zip
+</pre>
+
+<p>This ZIP file (that includes gem archive and documentation) is generated
+in file <i>build/bee-X.Y.Z.zip</i>.</p>
+
+<p>Note that Windows users can't generate this archive because it includes
+the documentation that runs Unix commands to generate examples.</p>
+
+<p><i>Enjoy!</i></p>

@@ -1,0 +1,6 @@
+- properties:
+    12three: 123
+
+- target: test
+  script:
+  - print: "12three: #{12three}"

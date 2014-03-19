@@ -1,0 +1,7 @@
+- target: first
+  script: "ls"
+
+- target: second
+  script: |
+    cd tmp
+    ls

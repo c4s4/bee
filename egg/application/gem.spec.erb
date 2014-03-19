@@ -1,0 +1,27 @@
+require 'rubygems'
+
+remove_const(:SPEC) if defined?(SPEC)
+
+SPEC = Gem::Specification.new do |spec|
+  spec.name = '<%= name %>'
+  spec.version = '<%= version %>'
+  spec.author = '<%= author %>'
+  spec.email = '<%= email %>'
+  spec.homepage = '<%= homepage %>'
+  spec.rubyforge_project = '<%= rubyforge %>'
+  spec.platform = <%= platform %>
+  spec.summary = '<%= summary %>'
+  spec.description = '<%= description %>'
+  spec.files = Dir.glob('{bin,lib}/**/*').delete_if do |file|
+    file =~ /CVS/
+  end
+  spec.require_path = 'lib'
+  spec.has_rdoc = true
+  spec.executables = ['<%= name %>']
+  spec.default_executable = '<%= name %>'
+<% for key in dependencies.keys.sort %>
+  spec.add_dependency("<%= key %>", <%= dependencies[key].inspect %>)
+<% end %>
+  spec.post_install_message = 'Enjoy <%= name %>!' if
+    spec.respond_to? :post_install_message
+end

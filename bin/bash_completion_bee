@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# To enable bash completion for Bee, copy this file in directory 
+# /etc/bash_completion.d/ and rename it bee. Next time you open a terminal,
+# Bee completion should work:
+# 
+# $ bee --help[TAB]
+# --help           --help-build     --help-task      --help-template
+#
+# $ bee t[TAB]
+# tag test
+#
+# Completion works on long options (starting with --) and targets of the build
+# file.
+
+_bee()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    case $prev in
+        -k)
+            tasks="`bee -x`"
+            COMPREPLY=( $(compgen -W "${tasks}" -- $cur ) )
+            return 0
+            ;;
+        -t)
+            templates="`bee -y`"
+            COMPREPLY=( $(compgen -W "${templates}" -- $cur ) )
+            return 0
+            ;;
+        -e)
+            templates="`bee -y`"
+            COMPREPLY=( $(compgen -W "${templates}" -- $cur ) )
+            return 0
+            ;;
+    esac
+
+    if [[ ${cur} == -* ]] ; then
+        opts="`bee -o`" 
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    else
+        opts="`bee -a`"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+
+complete -F _bee bee
+complete -F _bee b
+

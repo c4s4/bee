@@ -1,0 +1,11 @@
+- name: Michel Casabianca
+  email: michel.casabianca at gmail.com
+  comment: Core developer and project manager.
+
+- name: Anders F Björklund
+  comment: Many bug fixes, Dry Run mode implementation and man page.
+
+- name: Avi Bryant
+  comment: >
+    Thanks for his brilliant way to get methods information from within a class.
+    That kind of hacks you would like to write by yourself!

@@ -1,0 +1,9 @@
+- properties:
+    i: 5
+
+- target: loop
+  script:
+  - while: i > 0
+    do:
+    - print: :i
+    - rb: i -= 1

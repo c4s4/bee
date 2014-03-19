@@ -1,0 +1,16 @@
+- "Unit tests won't run for egg bee.package if you name the project 'test'.
+   Error message is 'uninitialized constant Bee::Task::Test::Unit'. This
+   seems to be a conflict between created directory 'test' and 'test/unit'
+   one."
+
+- "The build file used to extract help while typing 'bee -e package' is not in
+   the right version if more than one version of Bee has been installed. More
+   generally, we are not able to get appropriate version of the gem. But which
+   one should we chose?"
+
+- "When extending a build with a nil property, this property is defined (as
+   nil) while it should not."
+
+- "Try without catch will raise an exception."
+
+- "Context from parents is not loaded."

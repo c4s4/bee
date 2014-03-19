@@ -1,0 +1,14 @@
+- build:       clean
+  description: Parent build file to clean build directory
+  abstract:    true
+
+- properties:
+    build:        "build"
+    clean_dirs:   [:build]
+    clean_files:  ["**/*~", "**/.#*", "**/.DS_Store"]
+
+- target: clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files

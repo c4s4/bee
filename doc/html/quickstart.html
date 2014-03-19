@@ -1,0 +1,252 @@
+<!--
+Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<h2>What is Bee?</h2>
+
+<p>Bee is a build tool. This means that its purpose is to automate a build
+process. Its design goals are:</p>
+
+<ul>
+<li><b>Clean and simple build file syntax</b>. While XML is too verbose and
+Ruby too complicated, <a href="http://www.yaml.org/">YAML</a> is perfect with
+its simple yet powerful syntax.</li>
+<li><b>Speed</b>. Slow startup are irritating while working with a build
+tool the whole day. Bee happens to be as fast as Make, according to my tests
+on Make builds ported to Bee.</li>
+<li><b>System and language independent</b>. Bee is written in Ruby, which is
+platform independent, and is not limited to building Ruby projects. 
+Furthermore, using Bee tasks (we'll see later) instead of shell commands is
+a way to write build files that would run on any platform.</li>
+<li><b>Run Ruby scripts</b>. Because Ruby is so cool, nobody wants to write
+anymore intricate shell scripts to code complicated tasks involving sed, grep
+with loads of pipes! Just write it in a Ruby script! Nevertheless, you are
+free to write shell scripts if you build your project on a single platform.</li>
+</ul>
+
+<p>To demonstrate these features, let's see what <i>hello world</i> example
+looks like using Bee:</p>
+
+<?include file="exp/quickstart-hello-world.yml" ?>
+
+<p>This is that simple!</p>
+
+<h2>Build properties</h2>
+
+<p>A build file can embed properties that are like variables. For instance,
+we can put user name in a property named <i>user_name</i> like this:</p>
+
+<?include file="exp/quickstart-properties-1.yml" ?>
+
+<p>We access the value of this property with a Ruby syntax. Thus, to get
+value for property <i>user_name</i>, we must write <tt>#{user_name}</tt>.</p>
+
+<p>In this example, the property value is a string <tt>"World"</tt>.
+In fact, this is a Ruby expression that is evaluated to get the value of
+the property. Thus, we can write Ruby expressions as value. For instance,
+to get the user name, we could write:</p>
+
+<?include file="exp/quickstart-properties-2.yml" ?>
+
+<p>Which could print:</p>
+
+<?bee build="exp/quickstart-properties-2.yml" options="-s ll:80 hello" ?>
+
+<p>Properties may also have integer, list or hash values. You must
+then use a YAML syntax to write them, but fortunately, this syntax is
+very close to Ruby one:</p>
+
+<?include file="exp/quickstart-properties-3.yml" ?>
+
+<p>This outputs:</p>
+
+<?bee build="exp/quickstart-properties-3.yml" options="-s ll:80 hello" ?>
+
+<p>Bee defines a special property named <i>base</i> which contains
+absolute path for build file directory. This is useful for building
+absolute file path, such as <tt>license: "#{base}/LICENSE"</tt>. Bee
+also stores directory where it was started in property <i>here</i>.
+These two properties might differ in some circumstances, for instance
+when starting Bee searching recursively build file with command line
+argument <tt>-r</tt>. These two property names are reserved for Bee
+usage and you can't name your properties <i>base</i> or <i>here</i>.</p>
+
+<p>It is also possible to load properties from a YAML file that contains
+a list of properties to set. Just write the file name (absolute or
+relative to the directory of the build file) instead of the list of
+properties. For instance, to load properties in file <i>numbers.yml</i>:</p>
+
+<?include file="exp/quickstart-properties-4.yml" ?>
+
+<p>Into a build file, you might write:</p>
+
+<?include file="exp/quickstart-properties-5.yml" ?>
+
+<h2>Targets</h2>
+
+<p>If we see build files as programs, we could see targets as functions
+that you can call to achieve a given goal. A build file can define more
+that one target that may depend on each other. For instance:</p>
+
+<?include file="exp/quickstart-hello-world-2.yml" ?>
+
+<p>Which produces following output:</p>
+
+<?bee build="exp/quickstart-hello-world-2.yml" options="-s ll:80 hello" ?>
+
+<p>Target <i>hello</i> now depends on target <i>capitalize</i> which 
+capitalizes <i>user_name</i> property. Thus, Bee runs first target 
+<i>capitalize</i>, then target <i>hello</i>.</p>
+
+<p>You can tell Bee to run a given target by passing its name on
+command line. For instance, running build file above typing
+<tt>bee capitalize</tt> would output:</p>
+
+<?bee build="exp/quickstart-hello-world-2.yml" options="-s ll:80 capitalize" ?>
+
+<p>Which is not much, because target <i>capitalize</i> doesn't output
+anything.</p>
+
+<p>When you don't pass any target on command line, Bee selects the
+first one as default target. There is a way to force default target
+(even if not the first one) by adding build information entry that
+indicates default build target:</p>
+
+<?include file="exp/quickstart-hello-world-3.yml" ?>
+
+<p>Which, when launched without specifying any target on command line, 
+outputs:</p>
+
+<?bee build="exp/quickstart-hello-world-3.yml" options="-s ll:80" ?>
+
+<h2>Tasks</h2>
+
+<p>If targets are functions, tasks can be seen as instructions. They can
+be shell scripts, Ruby code or Bee tasks:</p>
+
+<h3>Shell scripts</h3>
+
+<p>To run a shell script, you just have to put it in a string. Thus,
+to print the user's name, we could write:</p>
+
+<pre>- 'echo "Hello $USER!"'</pre>
+
+<p>Note that we can surround YAML strings with simple or double quotes.
+We choose simple quotes here so that we can use double for the Shell one.
+We could also escape double quotes inside YAML string as follows:</p>
+
+<pre>- "echo \"Hello $USER!\""</pre>
+
+<p>If return value of the script is not <i>0</i>, which denotes an
+error running the script, the build is interrupted and an error message
+is printed on the console. For instance, this script:</p>
+
+<?include file="exp/quickstart-broken-shell.yml" ?>
+
+<p>Will produce this output on the console:</p>
+
+<?bee build="exp/quickstart-broken-shell.yml" options="-s ll:80 broken" ?>
+
+<p>There are convenient ways to write shell scripts:</p>
+
+<?include file="exp/quickstart-convenient-shell.yml" ?>
+
+<p>First, when a target embeds a single shell script, we can write it
+just after the <tt>script</tt> key. Second, a multi line shell scripts
+can be written using pipe character (<i>|</i>).</p>
+
+<h3>Ruby scripts</h3>
+
+<p>A Ruby script must be preceded with <tt>rb</tt> key, such as in
+example bellow:</p>
+
+<?include file="exp/quickstart-ruby.yml" ?>
+
+<p>Which outputs:</p>
+
+<?bee build="exp/quickstart-ruby.yml" options="-s ll:80 ruby" ?>
+
+<p>It is also possible to use YAML <i>pipe</i> syntax for multi line Ruby 
+scripts.</p>
+
+<h3>Bee tasks</h3>
+
+<p>These tasks are written in Ruby and can be called with pure YAML syntax,
+as follows:</p>
+
+<?include file="exp/quickstart-bee-task.yml" ?>
+
+<p>As you might guess, <tt>print</tt> Bee task prints the string passed as 
+parameter on the console, and this build file outputs as expected:</p>
+
+<?bee build="exp/quickstart-bee-task.yml" options="-s ll:80 hello" ?>
+
+<h3>Control structures</h3>
+
+<p>Bee is not a programming language, but it enables you to control the
+tasks execution with control structures. There is a <code>if-then-else</code>
+construct that works this way:</p>
+
+<?include file="exp/quickstart-if.yml" ?>
+
+<p>You can also loop while a condition is met, using the <code>while-do</code>
+construct:</p>
+
+<?include file="exp/quickstart-while.yml" ?>
+
+<p>The last construct if <code>for-in-do</code> which will iterate over a
+list (a plain list or a Ruby expression evaluated as an Enumerable). For
+instance, to iterate over the files in the current directory, you might 
+write:</p>
+
+<?include file="exp/quickstart-for.yml" ?>
+
+<p>Finally, <code>try-catch</code> consruct helps manage errors. For instance,
+if you want to know if a given command exists, you might write:</p>
+
+<?include file="exp/quickstart-try.yml" ?>
+
+<p>Note that while not tasks, you can get help about these constructs the
+same way you get help about tasks (as seen hereafter).</p>
+
+<h2>Getting help</h2>
+
+<p>To get help on Bee command line arguments, type <tt>bee -h</tt>, which
+will print:</p>
+
+<?bee options="-h ll:80 hello" ?>
+
+<p>To get help about a build file, type <tt>bee -b</tt>. This will output
+the build name and description, property names and values, target names
+and description and default target:</p>
+
+<?bee build="exp/quickstart-hello-world-3.yml"  options="-b -s ll:80 hello" ?>
+
+<p>To get help on a given task, use <tt>-k</tt> option. For instance, to
+get help about <i>print</i> task, type <tt>bee -k print</tt>, which would
+output:</p>
+
+<?bee options="-k print -s ll:80 hello" ?>
+
+<p>You can find documentation about all standard tasks 
+<a href="tasksreference.html">on this page</a>.</p>
+
+<h2>Go further</h2>
+
+<p>Bee has much more to offer, including build inheritance, scaffoldings and
+many more features detailed in the <a href="userguide.html">User Guide</a>.
+After playing a while with Bee, you should read it to get more from it.</p>
+
+<p><i>Enjoy!</i></p>

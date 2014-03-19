@@ -1,0 +1,42 @@
+# Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+require 'rubygems'
+
+remove_const(:SPEC) if defined?(SPEC)
+
+SPEC = Gem::Specification.new do |spec|
+  spec.name = '<%= name %>'
+  spec.version = '<%= version %>'
+  spec.author = '<%= author %>'
+  spec.email = '<%= email %>'
+  spec.homepage = '<%= homepage %>'
+  spec.rubyforge_project = '<%= rubyforge %>'
+  spec.platform = <%= platform %>
+  spec.summary = '<%= summary %>'
+  spec.description = '<%= description %>'
+  spec.files = Dir.glob(['{bin,lib,egg}/**/*']).delete_if do |file|
+    file =~ /CVS/ || file =~ /beedoc/
+  end
+  spec.require_path = 'lib'
+  spec.has_rdoc = true
+  spec.extra_rdoc_files = ['README', 'LICENSE']
+  spec.executables = ['bee']
+  spec.default_executable = 'bee'
+<% for key in dependencies.keys.sort %>
+  spec.add_dependency("<%= key %>", <%= dependencies[key].inspect %>)
+<% end %>
+  spec.post_install_message = 'Enjoy bee!' if
+    spec.respond_to? :post_install_message
+end

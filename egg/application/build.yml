@@ -1,0 +1,97 @@
+# Build info
+- build: <%= name %>
+  default: all
+  description: Build file to build sample Ruby application.
+
+# Build properties
+- properties:
+    name:         "<%= name %>"
+    version:      ""
+    author:       ""
+    years:        ""
+    platform:     "Gem::Platform::RUBY"
+    summary:      ""
+    description:  ""
+    email:        ""
+    homepage:     ""
+    rubyforge:    ""
+    dependencies:
+      bee: [">= 0.11.0"]
+    lib_dir:      "lib"
+    test_dir:     "test"
+    build_dir:    "build"
+    api_dir:      "#{build_dir}/api"
+    gem_spec:     "gem.spec"
+    gem_spec_erb: "gem.spec.erb"
+    gem_package:  "#{name}-#{version}.gem"
+    rdoc_files:   ["#{lib_dir}/*.rb"]
+    zip_excludes: ["**/CVS", "**/.DS_Store", "**/*~"]
+    zip_prefix:   "#{name}-#{version}"
+    zip_archive:  "#{build_dir}/#{name}-#{version}.zip"
+    clean_dirs:   [:build_dir]
+    clean_files:  ["**/*~", "**/.#*", "**/.DS_Store", :gem_spec]
+
+# Build targets
+- target: test
+  description: Run unit tests
+  script:
+  - test:
+      includes: "#{test_dir}/**/tc_*.rb"
+      dir:      :test_dir
+
+- target: gem
+  depends: test
+  description: Generate Gem package
+  script:
+  - mkdir: :build_dir
+  - erb: { src: :gem_spec_erb, dest: :gem_spec }
+  - gem: :gem_spec
+  - mv: { src: :gem_package, dest: :build_dir }
+
+- target: api
+  description: Generate API documentation
+  script:
+  - mkdir: :build_dir
+  - rdoc: { includes: :rdoc_files, dest: :api_dir }
+
+- target: zip
+  depends: [gem, api]
+  description: Generate ZIP distribution archive
+  script:
+  - zip:
+      root:     :build_dir
+      includes: "*.gem"
+      prefix:   "#{zip_prefix}/gem"
+      dest:     :zip_archive
+  - zip:
+      root:     :api_dir
+      includes: "**/*"
+      prefix:   "#{zip_prefix}/doc"
+      dest:     :zip_archive
+
+- target: push
+  depends: [clean, gem]
+  description: Push gem on gemcutter (must have installed gemcutter to run)
+  script:
+  - "gem push #{build_dir}/#{gem_package}"
+
+- target: install
+  depends: gem
+  description: Install generated gem
+  script:
+  - "sudo gem install -l #{build_dir}/#{gem_package}"
+
+- target: uninstall
+  description: Uninstall gem
+  script:
+  - "sudo gem uninstall -x #{name}"
+
+- target: clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files
+
+- target: all
+  depends: [clean, zip]
+  description: Generate the whole project

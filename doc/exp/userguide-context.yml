@@ -1,0 +1,9 @@
+- build: hello
+  context: userguide-context.rb
+
+- properties:
+    who: "World"
+
+- target: hello
+  script:
+  - rb: "say_hello(who)"

@@ -1,0 +1,3 @@
+- target: ruby
+  script:
+  - rb: 'puts "We are running Ruby #{RUBY_VERSION}"'

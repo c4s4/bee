@@ -1,0 +1,10 @@
+- properties:
+    foo: "foo"
+    bar: "#{foo}bar"
+    upcase: "#{foo.upcase}"
+
+- target: test
+  script:
+  - print: "foo: #{foo}"
+  - print: "bar: #{bar}"
+  - print: "upcase: #{upcase}"

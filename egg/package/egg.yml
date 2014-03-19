@@ -1,0 +1,58 @@
+- build: hello
+  default: all
+  description: "Generate a project for a Ruby script"
+
+- properties:
+    project_name: hello
+    description: |
+      This script will create a project for a Ruby script that might be
+      distributed as a gem. Generated build file has a single target gem
+      to generate the distribution gem.
+
+- target: welcome
+  description: "Print information message"
+  script:
+  - print: :description
+
+- target: prompt
+  depends: welcome
+  description: "Prompt for project information"
+  script:
+  - print: "Please answer following questions to generate the project:"
+  - prompt:
+      message: "What is the project's name?"
+      default: :project_name
+      property: project_name
+
+- target: generate
+  depends: prompt
+  description: "Generate project"
+  script:
+  - print: "Generating project..."
+  - rb: |
+      error "A directory named '#{project_name}' already exists, aborting" if
+        File.exists?("#{here}/#{project_name}")
+      name = "<%= name %>"
+  - mkdir: "#{here}/#{project_name}"
+  - mkdir: "#{here}/#{project_name}/bin"
+  - mkdir: "#{here}/#{project_name}/lib"
+  - erb:
+      src:  "#{base}/hello/build.erb"
+      dest: "#{here}/#{project_name}/build.yml"
+  - cp:
+      src:  "#{base}/hello/script.rb"
+      dest: "#{here}/#{project_name}/lib/#{project_name}.rb"
+  - erb:
+      src:  "#{base}/hello/launcher.erb"
+      dest: "#{here}/#{project_name}/bin/#{project_name}"
+
+- target: customization
+  depends: generate
+  description: "Print information about project customization"
+  script:
+  - print: |
+      Project has been generated in directory '#{project_name}'. Type 'bee -b'
+      to print information about generated build file. Enjoy!
+
+- target: all
+  depends: [welcome, prompt, generate, customization]

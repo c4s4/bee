@@ -1,0 +1,61 @@
+- build:       application
+  default:     all
+  description: "Generate a sample Ruby application project"
+
+- properties:
+    name: application
+    description: |
+      This script will create a sample Ruby application project. Build file
+      can run unit tests, generate API documentation, generate GEM archive
+      and build a ZIP distribution file.
+
+- target:      welcome
+  description: "Print information message"
+  script:
+  - print: :description
+
+- target:      prompt
+  depends:     welcome
+  description: "Prompt for project information"
+  script:
+  - print: "Please answer following questions to generate the project:"
+  - prompt:
+      message: "What is the project's name?"
+      default: :name
+      property: name
+
+- target:      generate
+  depends:     prompt
+  description: "Generate project"
+  script:
+  - print: "Generating project..."
+  - if: 'File.exists?("#{here}/#{name}")'
+    then:
+    - throw: "A directory named '#{name}' already exists, aborting"
+  - mkdir: "#{here}/#{name}"
+  - erb:
+      src:  "#{base}/application/build.yml"
+      dest: "#{here}/#{name}/build.yml"
+  - mkdir: "#{here}/#{name}/bin"
+  - cp:
+      src:  "#{base}/application/bin/start"
+      dest: "#{here}/#{name}/bin/#{name}"
+  - cp:
+      src:  "#{base}/application/bin/start.bat"
+      dest: "#{here}/#{name}/bin/#{name}.bat"
+  - copy:
+      root:     "#{base}/application"
+      excludes: ["build.yml", "bin/*"]
+      dest:     "#{here}/#{name}"
+
+- target:      customization
+  depends:     generate
+  description: "Print information about project customization"
+  script:
+  - print: |
+      Project has been generated in directory '#{name}'. Type 'bee -b'
+      to print information about generated build file.
+      Enjoy!
+
+- target:  all
+  depends: [welcome, prompt, generate, customization]

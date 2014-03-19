@@ -1,0 +1,16 @@
+- build: package_test
+  default: all
+  description: Build file to test generated and installed package
+
+- target: task
+  description: Test task for generated package
+  script:
+  - <%= project_short_name %>.hello: "World"
+
+- target: egg
+  description: Test egg for generated package
+  script:
+  - "bee -t '<%= project_short_name %>.hello'"
+
+- target: all
+  depends: [task, egg]

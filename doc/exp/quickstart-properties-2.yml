@@ -1,0 +1,6 @@
+- properties:
+    user_name: "#{ENV['USER']}"
+
+- target: hello
+  script:
+  - print: "Hello #{user_name}!"

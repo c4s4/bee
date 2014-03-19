@@ -1,0 +1,14 @@
+- properties:
+    file: userguide-ruby.yml
+
+- target: print
+  depends: targets
+  script:
+  - rb: "puts targets"
+  
+- target: targets
+  description: Get build targets
+  script:
+  - rb: |
+      entries = YAML::load(File.read(file))
+      targets = entries.collect{|entry| entry['target']}.compact!

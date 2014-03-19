@@ -1,0 +1,5 @@
+- build: son
+  extends: userguide-property-parent.yml
+
+- properties:
+    foo: "bar"

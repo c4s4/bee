@@ -1,0 +1,55 @@
+- build:       xmlrpc
+  default:     all
+  description: "Generate a sample XML-RPC project"
+
+- properties:
+    project_name: xmlrpc
+    description: |
+      This script will create a sample XML-RPC project with a Ruby server and
+      client.
+
+- target:      welcome
+  description: "Print information message"
+  script:
+  - print: :description
+
+- target:      prompt
+  depends:     welcome
+  description: "Prompt for project information"
+  script:
+  - print: "Please answer following questions to generate the project:"
+  - prompt:
+      message: "What is the project's name?"
+      default: :project_name
+      property: project_name
+
+- target:      generate
+  depends:     prompt
+  description: "Generate project"
+  script:
+  - print: "Generating project..."
+  - rb: |
+      error "A directory named '#{project_name}' already exists, aborting" if
+        File.exists?("#{here}/#{project_name}")
+  - mkdir: "#{here}/#{project_name}"
+  - erb:
+      src:  "#{base}/xmlrpc/build.yml"
+      dest: "#{here}/#{project_name}/build.yml"
+  - cp:
+      src:  "#{base}/xmlrpc/server.rb"
+      dest: "#{here}/#{project_name}/server.rb"
+  - cp:
+      src:  "#{base}/xmlrpc/client.rb"
+      dest: "#{here}/#{project_name}/client.rb"
+
+- target:      customization
+  depends:     generate
+  description: "Print information about project customization"
+  script:
+  - print: |
+      Project has been generated in directory '#{project_name}'. Type 'bee -b'
+      to print information about generated build file.
+      Enjoy!
+
+- target:  all
+  depends: [welcome, prompt, generate, customization]

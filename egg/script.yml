@@ -1,0 +1,44 @@
+- build:       source
+  default:     all
+  description: "Generate a sample Ruby script project"
+
+- properties:
+    name:        script
+    description: This script will generate a sample Ruby script project.
+
+- target:      welcome
+  description: "Print information message"
+  script:
+  - print: :description
+
+- target:      prompt
+  depends:     welcome
+  description: "Prompt for project information"
+  script:
+  - print: "Please answer following questions to generate the project:"
+  - prompt:
+      message: "What is the script project name?"
+      default: :name
+      property: name
+
+- target:      generate
+  depends:     prompt
+  description: "Generate project"
+  script:
+  - print: "Generating project..."
+  - mkdir: "#{here}/#{name}"
+  - erb:
+      src:  "#{base}/script/script.rb"
+      dest: "#{here}/#{name}/#{name}.rb"
+  - erb:
+      src:  "#{base}/script/build.yml"
+      dest: "#{here}/#{name}/build.yml"
+
+- target:      customization
+  depends:     generate
+  description: "Print information about project customization"
+  script:
+  - print: Script project has been generated in directory '#{name}'.
+
+- target:  all
+  depends: [welcome, prompt, generate, customization]

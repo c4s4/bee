@@ -1,0 +1,7 @@
+- target: hardware
+  script:
+  - if: RUBY_PLATFORM =~ /darwin/
+    then:
+    - print: Hello, I'm a Mac
+    else:
+    - print: Hello, I'm a PC

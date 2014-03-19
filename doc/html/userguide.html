@@ -1,0 +1,988 @@
+<!--
+Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<p>This file is the reference documentation for bee users. For a 
+short introduction to bee, please see <a href="quickstart.html">Quick
+Start</a> documentation.</p>
+
+<h2>Installation</h2>
+
+<p>Bee is written in Ruby, thus a Ruby Virtual Machine
+must be installed to run it. You can get one for free at 
+<a href="http://www.ruby-lang.org">http://www.ruby-lang.org</a>.
+You must also install <a href="http://docs.rubygems.org/">RubyGems</a>
+to install Bee and its dependencies.</p>
+
+<p>When Ruby and Gems are both installed, you can install Bee and its
+dependencies typing <tt>gem install bee</tt>. You might need 
+administrator privileges to do so. You can test your installation
+typing <code>bee -h</code>.</p>
+
+<p>Bee has been tested on MacOSX (Tiger 10.4.11 and Leopard 1.5.6), 
+Linux (Ubuntu 7.10 and Mint Helena) and Windows (XP SP2) for Ruby versions
+1.8.6-p36 (with gems 0.9.4), 1.8.6-p111 (with gems 1.0.1), 
+1.8.6-p114 (with gems 1.0.1), 1.8.7-p72 (with gems 1.3.0) and
+1.9.1-p376 (with integrated Gems). Thus it should run on most modern
+operating systems and Ruby VMs.</p>
+
+<p>If you have trouble installing Ruby VMs and Gems, please refer 
+to <a href="compiling.html">Compiling Bee</a> page for more information
+on these topics.</p>
+
+<h2>Usage</h2>
+
+<p>To run a build, type <tt>bee</tt>. This will run default target,
+that is the one specified in <tt>default</tt> key of the <tt>build</tt>
+entry. To run another target, pass its name on the command line. Thus,
+to run target <i>foo</i>, type <tt>bee foo</tt>. You can run more than one
+target at once, passing their name. Typing <tt>bee foo bar</tt> will run 
+target <i>foo</i>, then target <i>bar</i> (even if it was already executed
+running <i>foo</i>).</p>
+
+<p>Let's consider following build file:</p>
+
+<?include file="exp/userguide-build.yml"?>
+
+<p>Running build with command <tt>bee</tt> will run target <i>all</i>
+(default one) and produce following output:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-build.yml"
+      print="bee"?>
+
+<p>This output indicates running targets (<i>capitalize</i> and 
+<i>hello</i> in this case). Terminating <i>OK</i> indicates that
+no error was met and thus build is OK. If an error occurs, build
+ends with an error message and <tt>bee</tt> process exits with
+an error value.</p>
+
+<p>Build file name defaults to <i>build.yml</i> in current directory.
+You may override this default value using <tt>-f file</tt> option.
+Thus, to run build file <i>other.yml</i>, type <tt>bee -f other.yml</tt>.
+You can also look for build file recursively in file system using
+<tt>-r</tt> option. So, typing <tt>bee -r</tt> will look for build
+file named <i>build.yml</i> in current directory. If no build file
+was found, it will look in parent directories recursively. Build fails
+if no build file was found. You can use <tt>-r</tt> and <tt>-f file</tt>
+options at the same time to search an alternate file recursively.</p>
+
+<p>To produce verbose output running builds, use <tt>-v</tt> option.
+This will write build file used, executed tasks and execution time.
+Furthermore, this will output a stack trace (in addition to standard
+error message) when an error takes place, which is useful to debug
+Bee itself. Running previous build with verbose output would print:</p>
+
+<?run command="bee -v -s ll:80 -f exp/userguide-build.yml"
+      print="bee -v"?>
+
+<p>The <tt>-n</tt> option produces the same verbose output but
+doesn't actually runs tasks, it just prints them.</p>
+
+<p>To print help on usage, type <tt>bee -h</tt>. This outputs:</p>
+
+<?run command="bee -h"?>
+
+<p>To print help on build file, use <tt>-b</tt> option. This will output
+build name and description, property names and values, target names and
+descriptions and default target. For our sample build file, this will
+print:</p>
+
+<?run command="bee -b -s ll:80 -f exp/userguide-build.yml"
+      print="bee -b"?>
+
+<p>To get help on a given task, type <tt>bee -k task</tt>. Thus, to get
+help about <tt>print</tt> task for instance, you would type:</p>
+
+<?run command="bee -k print -s ll:80 -f exp/userguide-build.yml"
+      print="bee -k print"?>
+
+<p>To get help about all tasks, type <tt>bee -k ?</tt>. To get help
+about all tasks in package <i>foo</i>, type <tt>bee -k foo.?</tt>.</p>
+
+<p>To get help on templates, use the <tt>-e template</tt> option, with
+the same joker syntax than for task help. Thus, to get help about the
+<i>package</i> template, type <tt>bee -e package</tt>, which will
+output:</p>
+
+<?run command="bee -e package print -s ll:80 -f exp/userguide-build.yml"
+      print="bee -e package"?>
+
+<p>You can run a given template using option <tt>-t template</tt>.
+Templates are a way to quickly start a new project from scratch. They
+are quite comparable to Rails scaffoldings. For more information on
+using and developing templates, please see section
+<a href="developerguide.html#Template%20Project">Template Project of
+Developer Guide</a>.</p>
+
+<p>You can set text properties on command line with option
+<tt>-p foo=bar</tt>, setting property <i>foo</i> with value <i>"bar"</i>.
+You can set more than one property this way. For instance, launching
+following empty build file with command line 
+<tt>bee -b -p foo=1 bar=2</tt>:</p>
+
+<?include file="exp/userguide-command-line-properties.yml"?>
+
+<p>Will output:</p>
+
+<?run command="bee -s ll:80 -b -f exp/userguide-command-line-properties.yml -p foo=1 -p bar=2"
+      print="bee -b -p foo=1 -p bar=2"?>
+
+<p>When you run bee in a color terminal (such as the Terminal application
+on MacOSX or XTerm on Linux), you can get a colorized output using
+<tt>-c</tt> command line option. This will use the standard color scheme
+for bee. To customize your output, you can apply a style to output using
+<tt>-s style</tt> option. In the terminal bellow, we run a build with
+default black and white style and then applying the default color style:</p>
+
+<center><img src="userguide-style.png"></center>
+
+<p>Style are applied outputting ANSI colors and styles for Unix terminals
+and thus won't run on Windows machines. Styles are defined as coma separated
+key/value pairs. Keys are the following:</p>
+
+<table>
+<tr>
+<th>Key</th>
+<th>Description</th>
+</tr>
+<tr>
+<td><b>lc</b></td>
+<td>Character for target title (defaults to dash <i>-</i>). To set space,
+set to an empty value, such as: <code>...,lc:,...</code> as there should
+not be spaces in style option (this would break command line parsing).</td>
+</tr>
+<tr>
+<td><b>ll</b></td>
+<td>Line length. If not set, will try to determine it calling IOCTL
+function. If this call fails, will set line length to <i>80</i>
+characters.</td>
+</tr>
+<tr>
+<td><b>ts</b></td>
+<td>Target style.</td>
+</tr>
+<tr>
+<td><b>tf</b></td>
+<td>Target foreground.</td>
+</tr>
+<tr>
+<td><b>tb</b></td>
+<td>Target background.</td>
+</tr>
+<tr>
+<td><b>ks</b></td>
+<td>Task style.</td>
+</tr>
+<tr>
+<td><b>kf</b></td>
+<td>Task foreground.</td>
+</tr>
+<tr>
+<td><b>kb</b></td>
+<td>Task background.</td>
+</tr>
+<tr>
+<td><b>ss</b></td>
+<td>Success style.</td>
+</tr>
+<tr>
+<td><b>sf</b></td>
+<td>Success foreground.</td>
+</tr>
+<tr>
+<td><b>sb</b></td>
+<td>Success background.</td>
+</tr>
+<tr>
+<td><b>es</b></td>
+<td>Error style.</td>
+</tr>
+<tr>
+<td><b>ef</b></td>
+<td>Error foreground.</td>
+</tr>
+<tr>
+<td><b>eb</b></td>
+<td>Error background.</td>
+</tr>
+</table>
+
+<p>Possible foreground and background colors are the following ones: 
+black, red, green, yellow, blue, magenta, cyan and white. Styles are
+the following ones: bright, dim, underscore, blink, reverse and hidden.
+</p>
+
+<p>If a given key is not set, it will keep its default value. The Bee
+options environment variable <code>BEEOPT</code> is the best place
+to set you style settings (see section 
+<a href="#Configuration">Configuration</a> hereafter). Note that you
+can force black and white output using the <tt>-w</tt> options. This
+is useful to run bee in a software that doesn't manage ANSI color codes
+while color is set in your <tt>BEEOPT</tt> environment variable.</p>
+
+<p>You can print the Bee logo on command line with option <tt>-l</tt>:</p>
+
+<?run command="bee -l -s ll:80 -f exp/userguide-build.yml"
+      print="bee -l"?>
+
+<p>On Unix platforms, you can enable Bee completion in the terminal. To do so,
+you must copy the script <i>bash_completion_bee</i> (that you will find in the
+<i>bin</i> directory of the gem, use commands <tt>sudo updatedb</tt> and
+<tt>locate bash_completion_bee</tt> to locate it in your file system) or
+download it from <a href="http://rubyforge.org/frs/download.php/74229/bash_completion_bee">http://rubyforge.org/frs/download.php/74229/bash_completion_bee</a>) in directory <i>/etc/bash_completion.d/</i>, rename it <i>bee</i> and make
+it executable (with command <tt>sudo chmod +x /etc/bash_completion.d/bee</tt>).
+</p>
+
+<p>Then add the following lines in your shell startup file (that is <i>~/.profile</i>,
+<i>~/.bashrc</i> or such a configuration file):</p>
+
+<pre>
+# Bee completion
+. /etc/bash_completion.d/bee
+</pre>
+
+<p>Next time you open a terminal, completion should
+have been enabled for long options (starting with --), build target names,
+help about tasks and templates:</p>
+
+<pre class='term'>
+$ bee --help[TAB]
+--help           --help-build     --help-task      --help-template
+
+$ bee t[TAB]
+tag   test
+
+$ bee -k c[TAB]
+cat    cd     chmod  chown  copy   cp
+
+$ bee -e s[TAB]
+script   sinatra  source
+</pre>
+
+<p>On MacOSX, bash doesn't have completion feature out of the box. Thus, you 
+will have to install bash_completion yourself. You may use 
+<a href="http://www.finkproject.org/">Fink</a> (typing <tt>fink install 
+bash-completion</tt>) or <a href="http://www.macports.org/">MacPorts</a> 
+(typing <tt>port install bash_completion</tt>) for that purpose. To get
+more information about installation bash_completion on MacOSX, please
+visit 
+<a href="http://mult.ifario.us/p/getting-bash-completion-magic-on-os-x">this
+page</a>.</p>
+
+<h2>Configuration</h2>
+
+<p>Bee doesn't load configuration file at startup, but you can set
+command line options in environment variable <code>BEEOPT</code> that
+is appended on command line at startup. For instance, setting:</p>
+
+<pre>BEEOPT="-v"</pre>
+
+<p>Would always run Bee in verbose mode.</p>
+
+<h2>Build files</h2>
+
+<p>Let's consider following simple build file:</p>
+
+<?include file="exp/userguide-build.yml"?>
+
+<p>This is a <a href="http://www.yaml.org/">YAML</a> file and thus 
+follows standard YAML syntax. We won't detail the YAML syntax hereafter
+but instead see a useful subset to write Bee build files.</p>
+
+<h3>Build file syntax</h3>
+
+<p>You might think of YAML as a data aware text file format. Let's
+see a grocery list in YAML:</p>
+
+<?include file="exp/userguide-yaml-list.yml"?>
+
+<p>Let's write a short Ruby script that would load this file and print
+loaded data:</p>
+
+<?include file="exp/userguide-yaml-loader.rb"?>
+
+<p>Let's run this script passing our grocery list on command line:</p>
+
+<?run command="ruby userguide-yaml-loader.rb userguide-yaml-list.yml" 
+      directory="exp"?>
+
+<p>We see that the script loads this file as a Ruby list of strings.
+Thus, writing a list with dashes (as we would do for our grocery list)
+results in a list while loaded.</p>
+
+<p>Let's write a list with associated quantities:</p>
+
+<?include file="exp/userguide-yaml-hash.yml"?>
+
+<p>Let's run our script on this file:</p>
+
+<?run command="ruby userguide-yaml-loader.rb userguide-yaml-hash.yml" 
+      directory="exp"?>
+
+<p>This results in a Ruby Hash! Note that there are short syntax for
+list and hash, that happens to be very close to Ruby (and Python) syntax:</p>
+
+<?include file="exp/userguide-yaml-short-list-hash.yml"?>
+
+<p>But YAML is also aware of data types: in our hash, strings are
+associated to integers. When we write an integer, YAML parser recognizes
+it and returns an integer instead of a string. YAML is also aware of
+floats, booleans, dates and symbols. For instance:</p>
+
+<?include file="exp/userguide-yaml-data-types.yml"?>
+
+<p>Would be parsed as:</p>
+
+<?run command="ruby userguide-yaml-loader.rb userguide-yaml-data-types.yml" 
+      directory="exp"?>
+
+<p>You might wonder how we can write string <tt>123</tt> as it would be
+recognized as an integer. In this case, you can force string type using
+quotes, writing <tt>"123"</tt>. The form without quotes is a convenient
+way to write YAML strings. Note also that <i>null</i> is parsed into 
+<tt>nil</tt> and thus is not a valid name for targets.</p>
+
+<p>Now, you might ask how to nest a structure within another one. This is
+done with indentation. For instance, to write a list within another one,
+you might write:</p>
+
+<?include file="exp/userguide-yaml-nested-list.yml"?>
+
+<p>This will be parsed into:</p>
+
+<?run command="ruby userguide-yaml-loader.rb userguide-yaml-nested-list.yml" 
+      directory="exp"?>
+
+<p>Here is hash nested in a list:</p>
+
+<?include file="exp/userguide-yaml-nested-hash.yml"?>
+
+<p>That will be parsed into:</p>
+
+<?run command="ruby userguide-yaml-loader.rb userguide-yaml-nested-hash.yml" 
+      directory="exp"?>
+
+<p>This YAML syntax is very powerful, yet simple. This enables to write
+complicated data structures in a human readable form. We'll now see
+how it is used to write build files.</p>
+
+<p>A build file is a list of entries. An entry might be of the following
+type:</p>
+
+<ul>
+  <li><b>Information</b>: this is a hash that gives general
+  information about the build (such as its name or default target).</li>
+  <li><b>Properties</b>: this is a hash for build properties.</li>
+  <li><b>Targets</b>: this is the list of build targets.</li>
+</ul>
+
+<p>Let's detail each entry type.</p>
+
+<h3>Build information</h3>
+
+<p>Let's see a sample build information entry:</p>
+
+<?include file="exp/userguide-build-info.yml"?>
+
+<p>This entry is a hash with following keys:</p>
+
+<ul>
+  <li><b>build</b>: this mandatory key gives the build name (which will
+  generally be the name of the project to build).</li>
+  <li><b>extends</b>: parent build file(s) to extends. See section
+  <a href="#Build inheritance">Build inheritance</a> for more information
+  on this topic.</li>
+  <li><b>abstract</b>: tells if this build file is abstract, which means
+  that it must be extended to run. This entry is optional and defaults to
+  <tt>false</tt>.</li>
+  <li><b>default</b>: this optional key is the default target (or a list of
+  default targets), that is the target(s) to run when no target is given on
+  the command line. If there is no such entry, you must pass target to run
+  on the command line.</li>
+  <li><b>alias</b>: aliases for targets, as a map that associates an alias
+  to a target or a list of targets. Note that aliases are valid target
+  names when passed on command line or listed in <i>default</i> entry,
+  but they are not existing targets. Thus, you can't depend on them from
+  another target for instance.</li>
+  <li><b>description</b>: this optional key describes the build.</li>
+  <li><b>context</b>: this optional key is a file (or list of files)
+  to load in the build context (see <a href="#Build context">Build 
+  context</a> section hereafter for more information). This path might
+  be absolute or relative to the build file directory.</li>
+</ul>
+
+<p>This entry is optional but you can't have two of them in a given
+build file.</p>
+
+<h3>Build properties</h3>
+
+<p>This is a hash of build properties, such as in this build file:</p>
+
+<?include file="exp/userguide-build-properties.yml"?>
+
+<p>Properties are a hash made of name / value pairs. The name must be a 
+valid Ruby variable name and must not collide with a function in the Ruby
+context. For instance, following build file:</p>
+
+<?include file="exp/userguide-build-properties-error.yml"?>
+
+<p>Will result in a parsing error because evaluating Ruby expression
+<tt>12three = 123</tt> will output:</p>
+
+<?run command="ruby -e '12three = 123'" error="true"?>
+
+<p>While loading build file, properties are evaluated as Ruby expressions
+in the build context. Thus, a property such as <tt>foo: 123</tt> will
+result in evaluating <tt>foo = 123</tt> in the build context.</p>
+
+<p>Strings are also evaluated as Ruby strings, thus they can refer to
+other variables (using Ruby <tt>#{variable}</tt> syntax), or any Ruby
+expression, such as in this build file:</p>
+
+<?include file="exp/userguide-build-properties-expressions.yml"?>
+
+<p>Will output:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-build-properties-expressions.yml test"
+      print="bee test"?>
+
+<p>You can refer to another variable using symbol notation. For instance,
+in this build file:</p>
+
+<?include file="exp/userguide-build-properties-symbol.yml"?>
+
+<p>We refer to value of build property <tt>foo</tt> using symbol
+<tt>:foo</tt> instead of using the string evaluation. The result is
+the same for strings but not for other property types.</p>
+
+<p>Property values are not limited to strings. You might assign any
+YAML data type to a build property. This might be useful when
+using these properties in Ruby scripts or Bee tasks that expect
+a given type (such as lists for instance).</p>
+
+<p>It is also possible to load properties from a YAML file containing
+a list of properties to set. You would define such a properties file
+as following:</p>
+
+<?include file="exp/userguide-properties.yml"?>
+
+<p>You would load these properties such as in:</p>
+
+<?include file="exp/userguide-properties-build.yml"?>
+
+<p>You give the absolute or relative (to the build file directory) path
+to the properties file. Printing help on this build file would output:</p>
+
+<?run command="bee -s ll:80 -b -f exp/userguide-properties-build.yml"
+      print="bee -b"?> 
+
+<p>Which shows that properties we define in our YAML properties file
+were set in the build context.</p>
+
+<p>Note that if you define a given property twice in your build file, the
+last value will be kept. Properties you pass on command line (with option
+<tt>-p</tt>) overwrite build file properties and are defined after
+build file loading.</p>
+
+<h3>Default properties</h3>
+
+<p>When running, Bee automatically defines two properties:</p>
+
+<ul>
+<li><b>base</b> which is the directory of the build file.</li>
+<li><b>here</b> that is the directory where Bee was started.</li>
+</ul>
+
+<p>Following build file:</p>
+
+<?include file="exp/userguide-build-property-base.yml"?>
+
+<p>Outputs (depending of the directory you're running script into):</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-build-property-base.yml defaults"
+      print="bee defaults"?>
+
+<p>These properties are useful to get an absolute path for a file in
+your project. For instance, absolute path for file <i>lib/bee.rb</i>
+relatively to your build file may be obtained with property 
+<tt>abs_path = "#{base}/lib/bee.rb"</tt>. Note that <i>base</i> and
+<i>here</i> might have different values. Furthermore, these two
+property names are reserved for Bee usage and you can't name your
+own properties <i>base</i> or <i>here</i>.</p>
+
+<h3>Build targets</h3>
+
+<p>A build target is a hash with following keys:</p>
+
+<ul>
+  <li><b>target</b>: mandatory key that defines the target name.</li>
+  <li><b>depends</b>: a target (or list of targets) this target depends
+  on (optional).</li>
+  <li><b>description</b>: description of the target purpose (optional).</li>
+  <li><b>script</b>: list of tasks to run to perform this target
+  (optional).</li>
+</ul>
+
+<p>Here is a sample build file with two targets:</p>
+
+<?include file="exp/userguide-build-target.yml"?>
+
+<p>This will output:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-build-target.yml test"
+      print="bee test"?>
+
+<p>It runs first target <i>test</i> as there is no default target
+(no build information entry is defined) and target <i>test</i> is
+the first one of this build file. But this target depends on
+<i>hello</i>, thus it runs <i>hello</i> then <i>test</i>. You can
+tell Bee to run a given target passing its name on the command
+line. Thus, to run target <i>hello</i>, you can type:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-build-target.yml hello"
+      print="bee hello"?>
+
+<p>Note that you can't define two targets with the same name. If so,
+Bee will complain about duplicate target definition.</p>
+
+<p><tt>depends</tt> key may also be a list. In this case, all
+depending targets will run first. Note that a given target won't
+run twice, if already executed, it will be skipped.</p>
+
+<p><tt>script</tt> key is a task or list of tasks to run to 
+perform this target. A task may be:</p>
+
+<ul>
+  <li><b>Shell Task</b>: This is a shell script that will be executed
+  in directory of the build file.</li>
+  <li><b>Ruby Task</b>: This is a Ruby script that will be evaluated
+  in the context of the build in the directory of the build file.</li>
+  <li><b>Bee Task</b>: This is a task written in Ruby that can be
+  called using a YAML syntax.</li>
+</ul>
+
+<h4>Shell tasks</h4>
+
+<p>Shell tasks are shell scripts in strings. For instance, to output
+<i>Hello World!</i>, one might write:</p>
+
+<?include file="exp/userguide-shell-hello.yml"?>
+
+<p>Each shell script runs in its own process, thus following build
+file:</p>
+
+<?include file="exp/userguide-shell-multi.yml"?>
+
+<p>Might not output what you expect:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-shell-multi.yml test"
+      print="bee test"?>
+
+<p>This is because second line of script runs in another process than
+the first one, thus it doesn't old any value for environment variable
+<tt>WHO</tt>. To implement expected behavior, you should write:</p>
+
+<?include file="exp/userguide-shell-multi-fixed.yml"?>
+
+<p>Which will define the script in a single string and run it in a 
+single process, keeping value you assigned to the environment variable
+and thus behave as expected:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-shell-multi-fixed.yml test"
+      print="bee test"?>
+
+<p>You can access build properties in shell scripts using the Ruby
+notation:</p>
+
+<?include file="exp/userguide-shell-property.yml"?>
+
+<p>While running a shell script, Bee replaces strings <i>#{expression}</i>
+with the result of the expression evaluation in the build context. Thus,
+you can use a Ruby expression instead of a simple string reference. For
+instance, to get the uppercase value of string <i>who</i>, one might
+write:</p>
+
+<?include file="exp/userguide-shell-property-ruby.yml"?>
+
+<p>This will output:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-shell-property-ruby.yml test"
+      print="bee test"?>
+
+<p>These shell tasks are convenient, but you should keep in
+mind that they bind your build with a given operating system.
+To make your build independent of any platform or OS, you should
+use instead Ruby or Bee tasks we'll see now.</p>
+
+<h4>Ruby Tasks</h4>
+
+<p>They are pieces of Ruby scripts embedded in your build file and
+evaluated in the build context. In this context live build properties
+and scripts you loaded in the build context using the <tt>context</tt>
+key of the <tt>build</tt> entry of the build file (see section 
+<a href="#Build context">Build context</a> hereafter for more details).</p>
+
+<p>For instance, to print the list of targets for a given build file,
+one might write following build file:</p>
+
+<?include file="exp/userguide-ruby.yml"?>
+
+<p>That will print:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-ruby.yml print"
+      print="bee print"?>
+
+<p>Note that when we change directory in a given Ruby task, this
+directory will stay current one until the end of the current target.
+Furthermore, you can access build properties because they are local
+variables for your Ruby script. The same way, all local variables
+you define in your script are build properties. Thus, you must be
+careful to avoid collisions with properties, using prefixed names
+for local variables you don't want to expose as properties, such
+as <tt>_foo</tt>.</p>
+
+<p>Ruby tasks are not the right place for long ruby scripts because
+you are writing these scripts in a YAML file, you won't probably benefit
+from your editor's facilities for editing Ruby files. Furthermore,
+long Ruby tasks may make your build files less readable. Thus, you
+should put long ruby scripts in a separate Ruby source file and
+load it in the <tt>context</tt> key of the <tt>build</tt> entry of
+your build file.</p>
+
+<h4>Bee tasks</h4>
+
+<p>These tasks are coded in Ruby and called using a YAML syntax. We
+have already seen <tt>print</tt> task that prints a message on the
+console:</p>
+
+<?include file="exp/userguide-bee-task.yml"?>
+
+<p>This will output:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-bee-task.yml hello"
+      print="bee hello"?>
+
+<p>There are Bee tasks for many common tasks to build a project.
+To get help on usage of these tasks, please see 
+<a href="tasksreference.html">Tasks Reference</a> section of
+the documentation.</p>
+
+<p>These tasks are the best solution to write platform and OS
+independent build files. You can write your own tasks in Ruby, see
+section <a href="developerguide.html#Writing%20Bee%20Tasks">Writing
+Bee Tasks</a> in Developer Guide for more information on this topic.</p>
+
+<h3>Control Structures</h3>
+
+<p>In addition to tasks, a target can include control structures such
+as <code>if</code>, <code>while</code> or <code>for</code> to control
+tasks execution.</p>
+
+<h4>If construct</h4>
+
+<p><i>If</i> construct will evaluate the Ruby expression in the <code>if</code>
+entry and run block in the <code>then</code> entry or <code>else</code>
+entry accordingly.</p>
+
+<ul>
+<li><code>if</code>: the condition to evaluate. This is a Ruby expression
+evaluated in the build context.</li>
+<li><code>then</code>: block that is evaluated if confition in if is true.</li>
+<li><code>else</code>: block that is evaluated if confition in if is false.</li>
+</ul>
+
+<p>For instance, to test hardware platform, you might write:</p>
+
+<?include file="exp/userguide-if.yml"?>
+
+<p>Which would produce, as expected:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-if.yml hardware"
+      print="bee hardware"?>
+
+<h4>While construct</h4>
+
+<p><i>While</i> construct will run the block in the <code>do</code> entry
+while the Ruby condition in the <code>while</code> entry is true.</p>
+
+<ul>
+<li><code>while</code>: the condition to evaluate. This is a Ruby expression
+evaluated in the build context.</li>
+<li><code>do</code>: the block to run while the condition is true.</li>
+</ul>
+
+<p>For instance, to iterate five times, you could write:</p>
+
+<?include file="exp/userguide-while.yml"?>
+
+<p>Which would produce, as expected:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-while.yml loop"
+      print="bee loop"?>
+
+<h4>For construct</h4>
+
+<p><i>For</i> construct iterates on a list in the <code>in</code> entry, 
+putting values in a property which name is in the <code>for</code> entry
+and running the block in the <code>do</code> entry for each value.</p>
+
+<ul>
+<li><code>for</code>: the name of the property which receives values of the
+iteration.</li>
+<li><code>in</code>: a list on which to iterate. This can be a list or a ruby
+expression to evaluate in the context of the build to obtain the Enumerable
+on which to iterate.</li>
+<li><code>do</code>: the block to run at each iteration.</li>
+</ul>
+
+<p>For instance, to iterate on a list of files to create, you could write:</p>
+
+<?include file="exp/userguide-for1.yml"?>
+
+<p>Which would write on console:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-for1.yml for"
+      print="bee for"?>
+
+<p>In this previous example, the <code>in</code> entry was a list; in this
+case, Bee iterates on this list. You can also put a Ruby expression (which 
+is a string) in the <code>in</code> entry. Bee will then evaluate this
+expression, that must produce an Enumerable, and iterate on it. For instance,
+to iterate five times, we could write (using a Ruby Range):</p>
+
+<?include file="exp/userguide-for2.yml"?>
+
+<p>Which would output, as expected:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-for2.yml for"
+      print="bee for"?>
+
+<p>To iterate on files in current directory, we could write:</p>
+
+<?include file="exp/userguide-for3.yml"?>
+
+<h4>Try construct</h4>
+
+<p>This last construct is for error management. It will run the block in the
+<code>try</code> entry and catch any error that might occur. If an error
+occurs, instead of stopping the build, it will run the block in the
+<code>catch</code> entry.</p>
+
+<p>For instance, to test if a given command exists in the system your
+building on, you might write:</p>
+
+<?include file="exp/userguide-try.yml"?>
+
+<p>Which would output, as expected:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-try.yml test"
+      print="bee test"?>
+
+<h4>Getting help</h4>
+
+<p>Note that these constructs are not tasks, but you can get help about
+them the same way you get help about tasks. For instance, typing 
+<code>bee -k for</code> will print on console help about the 
+<code>for</code> construct.</p>
+
+<h4>Dry running control structures</h4>
+
+<p>Control structures won't run in dry mode to avoid any side effect
+evaluating Ruby expressions in <code>if</code>, <code>while</code>,
+<code>for</code> or <code>in</code> entries. Thus, while running builds
+in dry mode, control structure will be printed but tasks inside them won't
+as you might expect.</p>
+
+<h2>Build context</h2>
+
+<p>The build context is the place where build properties and Ruby
+tasks are evaluated. It can be initialized with Ruby source files
+you put in the <tt>context</tt> key of the <tt>build</tt> entry of
+your build file.</p>
+
+<p>Let's say you often use a greeting function. You can put it in
+a Ruby source file:</p>
+
+<?include file="exp/userguide-context.rb"?>
+
+<p>You would load it in context with following build file:</p>
+
+<?include file="exp/userguide-context.yml"?>
+
+<p>When this build file is loaded, it evaluates the Ruby source
+in <tt>context</tt> key in the build context. This will define
+function <i>say_hello(who)</i> in the context. Ruby task will
+then call this function with <tt>say_hello(who)</tt> expression.</p>
+
+<p>You can think of the build context as the IRB workspace where
+context scripts would be loaded, properties defined and Ruby tasks 
+evaluated.</p>
+
+<h2>Build inheritance</h2>
+
+<p>From release <i>0.5.0</i>, Bee implements build inheritance. This
+feature enables to extend one or more build files in another one, overwriting
+properties and overloading targets. There can be no collision in properties
+and targets of inherited build files. Note that a build file can be marked
+as abstract which means that it must have been extended to run.</p>
+
+<h3>Properties</h3>
+
+<p>Build properties overwrite existing ones in parent build file. Thus,
+let's say you write this parent build file:</p>
+
+<?include file="exp/userguide-property-parent.yml"?>
+
+<p>Then, in a son build file, you write:</p>
+
+<?include file="exp/userguide-property-son.yml"?>
+
+<p>We tell Bee that this script extends another one with <i>extends</i>
+key in <i>build</i> entry. Furthermore, property <i>foo</i> is redefined
+with new value <i>bar</i>.</p>
+
+<p>Running extending build file will print:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-property-son.yml test"
+      print="bee test"?>
+
+<h3>Targets</h3>
+
+<p>Targets are not replaced with those you define in extending build,
+but overloaded instead. This means that a target you define in an 
+extending build file will be called, but this target can call same 
+target defined in parent build using <i>super</i> in a script.</p>
+
+<p>Let's consider this parent build file:</p>
+
+<?include file="exp/userguide-target-parent.yml"?>
+
+<p>We extend it with:</p>
+
+<?include file="exp/userguide-target-son.yml"?>
+
+<p>Running extending build will display:</p>
+
+<?run command="bee -s ll:80 -f exp/userguide-target-son.yml test"
+      print="bee test"?>
+
+<p>Thus, calling super, you can patch existing target, adding tasks
+before and/or after running parent target. Not calling super, you can
+overwrite parent target altogether.</p>
+
+<p>Default targets are appended with inheritance. Thus, if parent build
+file <i>A</i> defines target <i>a</i> as default target and <i>B</i>
+defines <i>b</i> as default target, then a build file that extends
+<i>A</i> and <i>B</i> would have <i>a</i> and <i>b</i> as default
+targets. Furthermore, if a given build file defines default targets,
+it overrides default ones in parents. Thus if previous build file that
+extends <i>A</i> and <i>B</i> defines its own default targets, it will
+ignore those defined by parents.</p>
+
+<p>Behavior is similar for aliases : they are appended (for a given entry)
+and overridden by aliases in extending build file.</p>
+
+<h3>Inheritance Usage</h3>
+
+<p>Build inheritance is very handy when all your projects share a
+common structure and thus should have a common build file. You can
+write this common build file as a parent for children that will
+customize it in each project. This is a way to enforce a standard but
+add flexibility by specialization.</p>
+
+<p>You can also use inheritance to assemble specialized build files to
+perform specific targets. For instance, you might write a build file
+to build your distribution archive, another one to manage your Python
+code, another one to manage your release (tagging project and sending
+emails), and so on. Your project would then assemble these parts
+extending them and behaving as a scheduler to perform the job.</p>
+
+<p>Let's say you want to build all you projects in the 'build'
+directory and always write the same code to clean this directory.
+You might use the following file as a parent build file:</p>
+
+<?include file="exp/userguide-inheritance-parent.yml"?>
+
+<p>You would use this parent in your build file writing:</p>
+
+<?include file="exp/userguide-inheritance-son.yml"?>
+
+<p>This build file overwrites the <i>build</i> property with appropriate
+value <i>target</i> and uses the <i>clean</i> target to delete build
+directory and delete generated files.</p>
+
+<p>To avoid name collisions between build files, you should use prefixes
+on property and target names. For instance, in a parent build file
+named <i>python.yml</i>, you could prefix the property and target names
+with <i>py</i> so that <i>py_src</i> would not collide with another
+named <i>java_src</i> for instance.</p>
+
+<h2>Editors integration</h2>
+
+<p>Here are quick hacks to use Bee in Emacs and Eclipse. Please feel
+free to contribute any improvement or any editor or IDE integration, 
+it will be integrated or listed in next release.</p>
+
+<h3>Emacs</h3>
+
+<p>Here is a piece of configuration to put in your <i>.emacs</i> file
+to integrate Bee in Emacs:</p>
+
+<?include file="exp/userguide-emacs.el"?>
+
+<p>To run a compilation, hit <tt>F6</tt>. The mini-buffer prompts for a target
+to run (you can browse history hitting up or down arrows). Then hit 
+<tt>ENTER</tt> to run the build. Build file is searched recursively, thus
+you can launch build from any buffer in your project. Note that you can
+also use target prompt to type any command line option. For instance, to
+get help about current build, type <i>-b</i> as command line option.</p>
+
+<center><img src="userguide-emacs.png"></center>
+
+<h3>Eclipse</h3>
+
+<p>A simple way to integrate Bee in Eclipse is to use <i>External Tools</i>
+menu. Click on <i>External Tools...</i> item in this menu and the following
+dialog box will appear:</p>
+
+<center><img src="userguide-eclipse-bee.png"></center>
+
+<p>This configuration will launch Bee in the project home directory, which
+is a reasonable guess in much cases. You may have to adjust Bee location
+path according to your configuration.</p>
+
+<p>Following configuration will ask for the task to run, opening a pop-up
+where you can type it:</p>
+
+<center><img src="userguide-eclipse-bee-task.png"></center>
+
+<p>Running Bee this way will output build result in <i>Console</i> window:</p>
+
+<center><img src="userguide-eclipse-bee-output.png"></center>
+
+<h3>IntelliJ IDEA</h3>
+
+<p>Bee can be easily integrated in IDEA as an external tool. Open settings
+(in menu <b>File/Settings</b>) and add a new tool with the <b>+</b> button.
+You can add an entry to start Bee with default target with following 
+settings:</p>
+
+<center><img src="userguide-idea-bee.png"></center>
+
+<p>To add an entry that opens a dialog to prompt for target to run:</p>
+
+<center><img src="userguide-idea-bee-task.png"></center>
+
+<p><i>Enjoy!</i></p>

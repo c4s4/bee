@@ -1,0 +1,61 @@
+.TH bee 1
+.SH NAME
+bee \- build tool running YAML build files
+.SH SYNOPSIS
+.B "bee"
+[
+.B \-f
+.I buildfile
+]
+[option] ...
+[target] ...
+.SH DESCRIPTION
+.LP
+.I bee
+is a build tool running YAML build files a la Ant (but with a Shopping
+List syntax), which won't bother you with writing code when not necessary
+and happens to be as fast as Make. These build files are thin layers around
+scripts written in Shell, Ruby or bee tasks for platform independant builds
+(feature currently under development).
+.SH OPTIONS
+.TP
+.B -h
+Print help about usage and exit.
+.TP
+.B -b
+Print help about build and exit.
+.TP
+.B -n
+Don't actually run any commands; just print them.
+.TP
+.BI "\-k " task
+Print help about tasks in a package (writing "foo.?")
+or a  given one (writing "foo.bar") and exit.
+.TP
+.BI "\-p " name=value
+Set a named property with a given text value.
+.TP
+.BI "\-t " egg
+Run a given egg to generate a template project.
+.TP
+.B -v
+Enable verbose mode.
+.TP
+.BI "\-s " style
+Define style for output (see documentation).
+.TP
+.BI "\-f " file
+Build file to run (defaults to "build.yml").
+.TP
+.B -r
+Look for build file recursively up in file system.
+.TP
+.B -l
+Print bee logo on console.
+.TP
+.B target
+Targets to run (default target if omitted).
+.SH "SEE ALSO"
+.BR ant(1)
+.SH AUTHOR
+Copyright (C) Michel Casabianca & Contributors - 2006-2010

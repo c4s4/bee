@@ -1,0 +1,71 @@
+# Build info
+- build: <%= project_name %>
+  default: all
+  description: |
+    Project for bee package <%= project_name %>
+
+# Build properties
+- properties:
+    name: <%= project_name %>
+    version:      "0.0.1"
+    author:       ""
+    years:        ""
+    platform:     "Gem::Platform::RUBY"
+    summary:      ""
+    description:  ""
+    email:        ""
+    homepage:     "http://<%= project_name %>.rubyforge.org"
+    rubyforge:    ""
+    dependencies:
+      "bee": [">= 0.5.0"]
+    lib_dir:      "lib"
+    test_dir:     "test"
+    build_dir:    "build"
+    readme_erb:   "readme.erb"
+    readme_file:  "#{build_dir}/README"
+    license_file: "LICENSE"
+    gem_spec_erb: "gem.spec.erb"
+    gem_spec:     "#{build_dir}/gem.spec"
+    gem_package:  "#{name}-#{version}.gem"
+    clean_dirs:   :build_dir
+    clean_files:  ""
+
+# Build targets
+- target: test
+  description: Run unit tests
+  script:
+  - mkdir: :build_dir
+  - test:
+      includes: "#{test_dir}/**/tc_*.rb"
+      dir:      :test_dir
+
+- target: gem
+  depends: [clean, test]
+  description: Generate Gem package
+  script:
+  - mkdir: :build_dir
+  - erb: { src: :readme_erb, dest: :readme_file }
+  - erb: { src: :gem_spec_erb, dest: :gem_spec }
+  - gem: :gem_spec
+  - mv: { src: :gem_package, dest: :build_dir }
+
+- target: install
+  depends: gem
+  description: Install generated gem
+  script:
+  - "sudo gem install -l #{build_dir}/#{gem_package}"
+
+- target: uninstall
+  description: Uninstall gem
+  script:
+  - "sudo gem uninstall -x #{name}"
+
+- target: clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files
+
+- target: all
+  depends: [clean, gem]
+  description: Generate the whole project

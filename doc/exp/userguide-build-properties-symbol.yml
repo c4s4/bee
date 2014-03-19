@@ -1,0 +1,7 @@
+- properties:
+    foo: "foo"
+
+- target: test
+  script:
+  - print: "#{foo}"
+  - print: :foo

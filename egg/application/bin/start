@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+#
+# Launching script.
+
+$:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'rubygems'
+require 'application'
+
+parse_command_line

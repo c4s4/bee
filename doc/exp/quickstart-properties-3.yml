@@ -1,0 +1,12 @@
+- properties:
+    string:  "string"
+    integer: 1
+    list:    [1, "two"]
+    ahash:   {one: 1, two: 2}
+
+- target: hello
+  script:
+  - print: "string: #{string.inspect}"
+  - print: "integer: #{integer.inspect}"
+  - print: "list: #{list.inspect}"
+  - print: "ahash: #{hash.inspect}"

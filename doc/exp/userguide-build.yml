@@ -1,0 +1,17 @@
+- build: hello
+  default: hello
+  description: Example Hello World build file
+
+- properties:
+    user_name: "#{ENV['USER']}"
+
+- target: capitalize
+  description: Capitalize user name
+  script:
+  - rb: "user_name.capitalize!"
+
+- target: hello
+  depends: capitalize
+  description: Say hello to user
+  script:
+  - print: "Hello #{user_name}!"

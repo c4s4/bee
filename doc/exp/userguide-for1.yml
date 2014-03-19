@@ -1,0 +1,7 @@
+- target: for
+  script:
+  - for: file
+    in:  [/tmp/foo, /tmp/bar]
+    do:
+    - print: "Creating #{file}..."
+    - touch: :file

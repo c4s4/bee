@@ -1,0 +1,25 @@
+require 'bee_task_package'
+
+module Bee
+  
+  module Task
+  
+    # Package for <%= project_short_name.capitalize %> tasks.
+    class <%= project_short_name.capitalize %> < Package
+    
+      # Sample hello task that prints greeting message on console.
+      # 
+      # - who: who to greet.
+      # 
+      # Example
+      # 
+      #  - <%= project_short_name %>.hello: "World"
+      def hello(who)
+        puts "Hello #{who}!"
+      end
+
+    end
+
+  end
+
+end

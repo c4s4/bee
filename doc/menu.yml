@@ -1,0 +1,132 @@
+# Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- menu: bee
+
+- title: Welcome
+  type: html
+  file: html/home.html
+  dest: index.html
+  process: true
+
+- title: License
+  type: text
+  file: ../LICENSE
+  dest: license.html
+
+- title: Downloads
+  type: link
+  dest: http://rubyforge.org/frs/?group_id=2479
+
+- title: Documentation
+  type: section
+
+- title: Quick Start
+  type: html
+  file: html/quickstart.html
+  dest: quickstart.html
+  toc: yes
+  process: true
+
+- title: User Guide
+  type: html
+  file: html/userguide.html
+  dest: userguide.html
+  toc: yes
+  depth: 2
+  process: true
+
+- title: Tasks Reference
+  type: rdoc
+  file: ../build/tasks-reference.rdoc
+  dest: tasksreference.html
+  toc: true
+
+- title: Templates
+  type: rdoc
+  file: ../build/templates-reference.rdoc
+  dest: templatesreference.html
+  toc: true
+
+- title: Compiling Bee
+  type: html
+  file: html/compiling.html
+  dest: compiling.html
+  toc: false
+
+- title: Developer Guide
+  type: html
+  file: html/developerguide.html
+  dest: developerguide.html
+  toc: yes
+  depth: 3
+  process: true
+
+- title: Slides (French)
+  type: link
+  dest: bee-rmll-2010.pdf
+
+- title: Project
+  type: section
+
+- title: Source API
+  type: dir
+  dir: ../build/api/
+  dest: api
+
+- title: Test Coverage
+  type: dir
+  dir: ../build/coverage/
+  dest: coverage
+
+- title: CVS Repository
+  type: link
+  dest: http://rubyforge.org/scm/?group_id=2479
+
+- title: Project Page
+  type: link
+  dest: http://rubyforge.org/projects/bee/
+
+- title: GemCutter
+  type: link
+  dest: http://gemcutter.org/gems/bee
+
+- title: Releases
+  type: yaml
+  file: yml/releases.yml
+  erb: erb/releases.erb
+  dest: releases.html
+
+- title: Bugs
+  type: yaml
+  file: yml/bugs.yml
+  erb: erb/bugs.erb
+  dest: bugs.html
+
+- title: Contributing
+  type: section
+
+- title: Contributors
+  type: yaml
+  file: yml/contributors.yml
+  erb: erb/contributors.erb
+  dest: contributors.html
+
+- title: Mailing Lists
+  type: link
+  dest: http://rubyforge.org/mail/?group_id=2479
+
+- title: Forums
+  type: link
+  dest: http://rubyforge.org/forum/?group_id=2479

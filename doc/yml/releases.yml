@@ -1,0 +1,322 @@
+- release:     0.?.?
+  date:        2014-??-??
+  description: ???
+  fixed:
+  - "Dependency on rubyzip fixed to < 1.0.0 so that it works
+     on Ruby 1.8."
+
+- release:     0.12.1
+  date:        2013-09-12
+  description: Bug fix release
+  fixed:
+  - "Dependencies list to build Bee was fixed."
+  - "Removed warning requiring Mocha."
+  - "Evaluate ~ on beginning of paths." 
+
+- release:     0.12.0
+  date:        2013-05-15
+  description: Bug fix release
+  fixed:
+  - "Fixed for Ruby 1.9 (tested with Ruby 1.8.7-p371, 1.9.2-p320 and
+     1.9.3-p327 on Linux, 1.8.7-p160, 1.9.1-p376, 1.9.2-p136 and 1.9.3-p392
+     on MacOSX)."
+  - "Fixed documentation examples that failed without default target."
+
+- release:     0.11.4
+  date:        2012-08-16
+  description: Bug fix release
+  added:
+  - "Added a section in documentation to integrate Bee in IntelliJ IDEA."
+  removed:
+  - "Removed set parameter from copy task."
+  fixed:
+  - "Default and alias management: merge parents if not set in build file
+     else use value defined in the build file."
+
+- release:     0.11.3
+  date:        2012-06-01
+  description: New sets in copy task and -R option
+  added:
+  - "New sets parameter in copy task."
+  - "New -R option to print a given resource on console."
+  - "Default buid entry can be a string or a list of strings."
+  - "New alias entry to define alias list for targets."
+  removed:
+  - "First target is not the default one anymore, thus if no default target is
+     defined, you must pass one on the command line."
+  - "Removed clean.yml parent build file."
+
+- release:     0.11.2
+  date:        2012-01-29
+  description: Bug fix release
+  fixed:
+  - "Short resource format changed to ':package:/path/to/resource', where 
+     package is 'bee' for bee gem and 'foo' for bee_foo gem."
+  - "Fixed build help output so that property values are valid YAML."
+  - "Fixed bash completion installation procedure."
+  added:
+  - "Added clean.yml parent build file to clean (resource ':bee:clean.yml')."
+
+- release:     0.11.1
+  date:        2011-12-09
+  description: Bug fix release.
+  fixed:
+  - "Sinatra template build file fixed."
+  - "Fixed package template."
+  - "Added information message in targz target."
+  - "Fixed for RubyGems >= 1.8.0"
+  - "Fixed options -x (instead of -f) and -y (instead of -g)."
+  - "Sorted output for targets and options lists."
+  - "Fixed copy task documentation (for missing dest parameter)."
+  - "Fixed bug on template listing (bee -y)."
+  added:
+  - "Added username and password parameters for http_get task to manage basic
+     authentication."
+
+- release:     0.11.0
+  date:        2011-02-10
+  description: Complete code rework and 100% test coverage.
+  added:
+  - "Catch block in try/catch construct can be empty."
+  - "New alias 'raise' for 'throw' task."
+  - "Constructs for and if improved to accept symbols as reference for
+     properties."
+  - "Added link to slides from RMLL 2010 in documentation menu."
+  - "Added completion on templates (after '-t' option) and help about tasks
+     (after '-k' option) and templates (after '-e' option)."
+  fixed:
+  - "Complete rework of the code."
+  - "100% test coverage."
+  - "Fixed bash_completion_file that was corrupted in previous release
+     (replaced with bee launching script) and fixed documentation."
+  - "Automated tests for templates."
+  - "Task 'test' loads test files with absolute path."
+  - "Fixed construct printing in verbose mode (so that entries are in the
+     natural order: if-then-else for instance)."
+  - "Renamed task get into http_get."
+
+- release:     0.10.2
+  date:        2010-11-30
+  description: Added bash completion and improved version management.
+  added:
+  - Added bash completion (see User Guide for more information).
+  fixed:
+  - Improved version management.
+
+- release:     0.10.1
+  date:        2010-09-30
+  description: Bug fix release for templates.
+  fixed:
+  - Templates have been fixed.
+
+- release:     0.10.0
+  date:        2010-09-30
+  description: Release for fixed inheritance and properties mechanism.
+  fixed:
+  - Fixed an error parsing style string on command line.
+  - Fixed inheritance. A build file can inherit from more than a single parent,
+    but there must be no collisions between properties and targets of these
+    parent build files.
+  - Fixed properties. They are now maps and order is not important anymore
+    to manage dependencies.
+  - Added check to avoid properties collision with context functions.
+  - Fixed documentation.
+  removed:
+  - Build file inclusion is not supported anymore, thus you must move builds
+    in include statement to extends one.
+
+- release:     0.9.0
+  date:        2010-06-03
+  description: Release for Mixins support.
+  added:
+  - Mixins support (new includes entry in build information).
+
+- release:     0.8.1
+  date:        2010-04-16
+  description: Minor release with fixes and FTP tasks.
+  added:
+  - New 'encoding' parameter in mail task.
+  - Print duration (even if not in verbose mode) if build duration is greater
+    than one minute.
+  - Added 'echo' parameter to prompt task so that you can use it to prompt
+    for password for instance. Using 'highline' library so that this is a
+    new Bee dependency.
+  - Added new 'ftp_login', 'ftp_get', 'ftp_put' and 'ftp_mkdir' tasks.
+  fixed:
+  - Fixed user interruption management so that a stack trace is not printed.
+  - Rounded build duration to 3 significative numbers.
+
+- release:     0.8.0
+  date:        2010-04-04
+  description: Release for new templates and related documentation
+  added:
+  - New 'xmlrpc', 'source', 'script' and 'application' project templates.
+  - Documentation about all templates with a brief description.
+
+- release:     0.7.1
+  date:        2010-04-01
+  description: Release to fix zip task and add abstractness
+  fixed:
+  - Fixed zip task for includes parameter.
+  added:
+  - Implemented abstractness for build files (so that they can't run unless 
+    extended if they are declared abstract).
+
+- release:     0.7.0
+  date:        2010-02-17
+  description: Release for error management
+  added:
+  - New template project 'sinatra'.
+  - New tasks 'mail' and 'throw'.
+  - New 'try-catch' construct.
+  - New 'prop' parameter for 'get' task.
+  fixed:
+  - Runs on Ruby 1.9.
+
+- release:     0.6.1
+  date:        2010-02-11
+  description: Bug fix release
+  fixed:
+  - Fixed Ruby expression evaluation in strings.
+  - Fixed 'if-then-else', 'while-do' and 'for-in-do' constructs.
+
+- release:     0.6.0
+  date:        2010-02-08
+  description: Major release to add control structures.
+  added:
+  - Added 'options' entry for 'erb' task.
+  - Added new 'yaml_load' and 'yaml_dump' tasks.
+  - Added 'if-then-else', 'while-do' and 'for-in-do' constructs.
+
+- release:     0.5.3
+  date:        2010-02-03
+  description: Bug fix release
+  fixed:
+  - Fixed rubygems imports that may cause issues while using packages.
+
+- release:     0.5.2
+  date:        2010-01-11
+  description: Bug fix release.
+  fixed:
+  - Fixed test task.
+  - Fixed bug in target dependencies inheritance.
+  - Fixed target documentation inheritance.
+  - Improved test coverage.
+  added:
+  - New -c command line option to get a colorized output.
+  - New lenient option for copy and move tasks.
+  - Made output for help about project (bee -b) valid YAML.
+
+- release:     0.5.1
+  date:        2009-01-20
+  description: Bug fix release.
+  fixed:
+  - Fixed a bug related to target dependencies in build file help.
+  - Fixed a bug related to dependencies inheritance in targets.
+
+- release:     0.5.0
+  date:        2008-12-31
+  description: Important new features such as inheritance and templates.
+  added:
+  - Build inheritance.
+  - Templating system to generate skeletons for new projects.
+  - New tasks 'copy', 'move', 'bee', 'prompt', 'required' and 'sleep'.
+  - New command line options -p, to set properties, -n to run dry mode, -l
+    to print text logo on startup and -V to print version.
+  - New default property 'here' for directory where Bee was started.
+  - Properties loading from file.
+  - New 'join' parameter for find task.
+  - Made some aliases for tasks.
+  - URI passed to build/context and properties can be URLs.
+  fixed:
+  - Behavior when passing more than one target on command line; when
+    passing foo and bar, bar target will run even if already executed
+    while running foo.
+  - Files passed to build/context and properties can be absolute or
+    relative to build file directory.
+  - Build info entry must be first one in build file.
+  - Checked tasks parameters to avoid a stack trace on console for bad
+    tasks.
+  - Fixed many tasks.
+  - Empty shell scripts don't generate an error anymore (thanks to Anders
+    F Björklund).
+  - Term width fixed for MacOSX.
+  - Fixed post install message for Gem 0.8.11.
+
+- release:     0.4.0
+  date:        2007-06-25
+  description: Great rework.
+  fixed:
+  - Everything was fixed and reworked.
+  - Task parameter names made coherent.
+  added:
+  - More unit tests.
+  - New task coding framework.
+
+- release:     0.3.2
+  date:        2006-12-01
+  description: Bug fix release.
+  fixed:
+  - More fixes on Bee tasks.
+  - Definitive task architecture.
+  added:
+  - More unit tests.
+  - Contributors list in documentation.
+
+- release:     0.3.1
+  date:        2006-11-10
+  description: Bug fix release.
+  fixed:
+  - Fixed some Bee tasks.
+  - Fixed documentation.
+  added:
+  - Unit tests on default tasks.
+
+- release:     0.3.0
+  date:        2006-11-08
+  description: Implemented basic Bee tasks (for file management).
+  added:
+  - Basic Bee tasks and section 'Tasks References' in documentation.
+  - Symbol property reference to get property's value instead of string
+    representation.
+
+- release:     0.2.0
+  date:        2006-11-06
+  description: Implemented Bee task mechanism.
+  added:
+  - Implemented and documented Bee task mechanism.
+  removed:
+  - Don't distribute beedoc anymore as it is not documented yet.
+  fixed:
+  - Fixed files embedded in Gem (removed files from site documentation).
+  - Improved documentation.
+
+- release:     0.1.1
+  date:        2006-11-02
+  description: Bug fix release.
+  fixed:
+  - Unit test suite.
+  - Rdoc in ZIP archive.
+
+- release:     0.1.0
+  date:        2006-11-02
+  description: First Gem package.
+  added:
+  - Distribution as a Gem package.
+  - Template generation (-t option).
+  fixed:
+  - Directory in distribution archive postfixed with version.
+
+- release:     beta-1
+  date:        2006-10-31
+  description: First public release.
+  added:
+  - Run Ruby scripts.
+  - Load context on startup.
+  - Added checks on build files syntax.
+  - Documentation system.
+
+- release:     alpha
+  date:        2006-10-10
+  description: A simple night hack.
+

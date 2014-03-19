@@ -1,0 +1,4 @@
+- target: test
+  script:
+  - 'WHO="World"'
+  - 'echo "Hello ${WHO}!"'

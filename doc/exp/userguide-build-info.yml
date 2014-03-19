@@ -1,0 +1,6 @@
+- build: test
+  extends: parent.yml
+  abstract: false
+  default: all
+  description: Sample build
+  context: build.rb

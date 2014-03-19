@@ -1,0 +1,42 @@
+# Build info
+- build:       <%= project_name %>
+  default:     all
+  description: Sample XML-RPC project
+
+# Build properties
+- properties:
+    name:        <%= project_name %>
+    version:     "0.0.1"
+    build:       "build"
+    zip:         "#{build}/#{name}-#{version}.zip"
+    clean_dirs:  [:build]
+    clean_files: ["**/*~", "**/.#*", "**/.DS_Store"]
+
+# Build targets
+- target:      server
+  description: Run server
+  script:
+  - "ruby server.rb"
+
+- target:      client
+  description: Run client
+  script:
+  - "ruby client.rb"
+
+- target:      zip
+  description: Generate ZIP distribution archive
+  script:
+  - mkdir: :build
+  - zip:
+      prefix: "#{name}-#{version}"
+      dest:   :zip
+
+- target:      clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files
+
+- target:      all
+  depends:     [clean, zip]
+  description: Generate the whole project

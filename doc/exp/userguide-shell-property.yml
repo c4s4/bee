@@ -1,0 +1,6 @@
+- properties:
+    who: "World"
+
+- target: test
+  script:
+  - 'echo "Hello #{who}!"'

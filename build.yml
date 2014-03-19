@@ -1,0 +1,256 @@
+# Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Build info
+- build: bee
+  default: all
+  context: build.rb
+  description: |
+    "This is the build file to generate bee's distribution archives and
+    publish documentation on RubyForge. To generate documentation, you
+    must install rcov (typing 'gem install rcov') and syntax (typing 
+    'gem install syntax'). To publish documentation to RubyForge, you
+    need net-sftp library (install it typing 'gem install net-sftp').
+    To build project running Ruby 1.9 and later, you must install gem
+    test-unit (typing 'sudo gem install test-unit').
+    NOTE: Windows users can't generate documentation as there are many
+    sample Unix scripts that must run on generating platform, thus they
+    can't generate ZIP archive neither but can run unit tests and 
+    generate gem."
+
+# Build properties
+- properties:
+    name:         "bee"
+    version:      "0.12.1"
+    author:       "Michel Casabianca & Contributors"
+    years:        "2006-2012"
+    platform:     "Gem::Platform::RUBY"
+    summary:      "Bee is a build tool"
+    description:  "Bee is a build tool the way it should bee!"
+    email:        "michel.casabianca@gmail.com"
+    homepage:     "http://bee.rubyforge.org"
+    rubyforge:    "bee"
+    dependencies:
+      "archive-tar-minitar": [">= 0.5.1"]
+      "rubyzip":             [">= 0.9.1", "< 1.0.0"]
+      "highline":            [">= 1.5.2"]
+      # development
+      #"mocha":               [">= 0.13.0"]
+      #"sinatra"
+      #"net-sftp"
+    lib_dir:      "lib"
+    test_dir:     "test"
+    build_dir:    "build"
+    api_dir:      "#{build_dir}/api"
+    doc_dir:      "#{build_dir}/doc"
+    version_file: "#{lib_dir}/bee_version.rb"
+    readme_file:  "README"
+    readme_erb:   "README.erb"
+    license_file: "LICENSE"
+    gem_spec:     "gem.spec"
+    gem_spec_erb: "gem.spec.erb"
+    gem_package:  "#{name}-#{version}.gem"
+    doc_files:    ["doc/img/*.png", "doc/img/*.gif", 
+                  "doc/css/*.css", "doc/exp/*.zip", "doc/pdf/*.pdf"]
+    rdoc_files:   [:readme_file, :license_file, "#{lib_dir}/*.rb"]
+    zip_excludes: ["**/CVS", "**/.DS_Store", "**/*~"]
+    zip_prefix:   "#{name}-#{version}"
+    zip_archive:  "#{build_dir}/#{name}-#{version}.zip"
+    tasks_ref:    "#{build_dir}/tasks-reference.rdoc"
+    templ_ref:    "#{build_dir}/templates-reference.rdoc"
+    rcov_unix:    "rcov"
+    rcov_windows: "c:/ruby/bin/rcov.cmd"
+    rcov:         "#{if RUBY_PLATFORM =~ /win32/; rcov_windows else rcov_unix end}"
+    coverage_dir: "#{build_dir}/coverage"
+    home_user:    "casa"
+    home_host:    "rubyforge.org"
+    home_dir:     "/var/www/gforge-projects/bee"
+    clean_dirs:   [:build_dir]
+    clean_files:  ["**/*~", "**/.#*", "**/.DS_Store", 
+                   :version_file, :readme_file, :gem_spec]
+    status_cmd:   "cvs status 2> /dev/null | grep 'Locally Modified'"
+    cvs_tag:      "RELEASE-#{version.gsub(/\./, '-')}"
+    statcvs_home: "/opt/misc/statcvs-0.4.0"
+    statcvs_rep:  "#{build_dir}/statcvs"
+    # tells if we should run tests that need network
+    net_test:     false
+
+# Build targets
+- target:      test
+  description: Run unit tests
+  script:
+  - required:
+      library: mocha
+      message: "mocha must be installed to run target test"
+  - rb: "ENV['NET_TEST']=net_test.to_s"
+  - test:
+      includes: "#{test_dir}/tc_*.rb"
+      dir:      :test_dir
+
+- target:      version
+  description: Generate version file for release
+  script:
+  - rm: :version_file
+  - erb:
+      source: "module Bee\n\n    VERSION = '<%= version %>'\n\nend\n"
+      dest:   :version_file
+
+- target:      gem
+  depends:     [clean, test, version]
+  description: Generate Gem package
+  script:
+  - mkdir: :build_dir
+  - erb: { src: :readme_erb, dest: :readme_file }
+  - erb: { src: :gem_spec_erb, dest: :gem_spec }
+  - gem: :gem_spec
+  - mv: { src: :gem_package, dest: :build_dir }
+
+- target:      coverage
+  description: Generate test coverage report
+  script:
+  - required:
+      library: mocha
+      message: "mocha must be installed to run target coverage"
+  - mkdir: :build_dir
+  - rb: "ENV['NET_TEST']=net_test.to_s"
+  - "#{rcov} -o #{coverage_dir} #{test_dir}/tc_*.rb"
+
+- target:      api
+  description: Generate API documentation
+  script:
+  - mkdir: :build_dir
+  - erb: { src: :readme_erb, dest: :readme_file }
+  - rdoc: { includes: :rdoc_files, dest: :api_dir }
+
+- target:      doc
+  depends:     [clean, coverage, api]
+  description: Generate documentation
+  script:
+  - required:
+      library: syntax
+      message: "syntax must be installed to run target doc"
+  - mkdir: :build_dir
+  - rb: "ENV['BEEOPT']=''"
+  - rb: "generate_tasks_reference(tasks_ref)"
+  - rb: "generate_templates_reference(templ_ref)"
+  - "ruby bin/beedoc -o #{doc_dir} doc/menu.yml"
+  - cp: { src: :doc_files, dest: :doc_dir }
+  - cp: { src: :api_dir, dest: :doc_dir }
+  - cp: { src: :coverage_dir, dest: :doc_dir }
+
+- target:      zip
+  depends:     [gem, doc]
+  description: Generate ZIP distribution archive
+  script:
+  - zip:
+      includes: [:readme_file, :license_file]
+      prefix:   :zip_prefix
+      dest:     :zip_archive
+  - zip:
+      root:     :build_dir
+      includes: "*.gem"
+      prefix:   "#{zip_prefix}/gem"
+      dest:     :zip_archive
+  - zip:
+      root:     :doc_dir
+      includes: "**/*"
+      prefix:   "#{zip_prefix}/doc"
+      dest:     :zip_archive
+
+- target:      clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files
+
+- target:      all
+  depends:     [clean, gem]
+  description: Generate the whole project
+
+# other convenient targets
+- target:      publish
+  depends:     doc
+  description: Publish documentation on RubyForge
+  script:
+  - "scp -r #{doc_dir}/* #{home_user}@#{home_host}:#{home_dir}/"
+
+- target:      push
+  depends:     [clean, gem]
+  description: Push gem on gemcutter (must have installed gemcutter to run)
+  script:
+  - "gem push #{build_dir}/#{gem_package}"
+
+- target:      tag
+  description: Tag the release and check that there are no uncommited changes
+  script:
+  - print: "Checking uncommited changes"
+  - rb: "error 'There are uncommited changes' if `#{status_cmd}`.length > 0"
+  - print: "Tagging project '#{cvs_tag}'"
+  - "cvs tag #{cvs_tag}"
+
+- target:      checks
+  description: Checks before release (no uncommitted changes, version number
+               is the same in build file and release note, and date in release
+               note is current day)
+  script:
+  - print: "Checking uncommitted changes..."
+  - if: "`cvs -n -q update`.length > 0"
+    then:
+    - throw: "There are uncommitted changes"
+  - print: "Checking versions..."
+  - yaml_load:
+      prop: releases
+      file: doc/yml/releases.yml
+  - if: "version != releases[0]['release']"
+    then:
+    - throw: "Version in build file and release note are different"
+  - print: "Checking date..."
+  - if: "Date.today != releases[0]['date']"
+    then:
+    - throw: "Date in release note is not today"
+
+- target:      release
+  depends:     [clean, checks, test, doc, gem, zip, tag, push, publish]
+  description: Release Bee, running test, generating doc, generating gem,
+               sending it to GemCutter and publishing doc on RubyForge
+  script:
+  - print: "!!! Don't forget to send gem and zip to RubyForge !!!"
+
+- target:      install
+  depends:     gem
+  description: Install generated gem
+  script:
+  - "sudo gem install -l #{build_dir}/#{gem_package}"
+
+- target:      uninstall
+  description: Uninstall gem
+  script:
+  - try:
+    - "sudo gem uninstall -x #{name}"
+    catch:
+
+- target:      stats
+  description: Generate StatCVS report
+  script:
+  - mkdir: :statcvs_rep
+  - print: "Generating CVS logs..."
+  - "cvs log > #{build_dir}/cvs.log 2> /dev/null"
+  - "java -jar #{statcvs_home}/statcvs.jar -output-dir #{statcvs_rep} #{build_dir}/cvs.log #{base}"
+
+- target:      notes
+  depends:     clean
+  description: Print notes in files
+  script:
+  - rb: "print_notes('.')"
+

@@ -1,0 +1,6 @@
+- properties:
+    who: "World"
+
+- target: hello
+  script:
+  - print: "Hello #{who}!"

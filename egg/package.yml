@@ -1,0 +1,100 @@
+- build:       package
+  default:     all
+  description: "Generate a bee package project"
+
+- properties:
+    project_name: bee_hello
+    description: |
+      This script will create a project for a bee package with sample task (in
+      'lib' directory) and template (in 'egg' directory). A unit test for the
+      task is generated in 'test' directory. Generated build file has a target
+      'test' to run unit tests, a target 'gem' to generate a gem archive, a
+      'clean' target to clean generated files and a 'install' target to build
+      and install gem.
+
+- target:      welcome
+  description: "Print information message"
+  script:
+  - print: :description
+
+- target:      prompt
+  depends:     welcome
+  description: "Prompt for project information"
+  script:
+  - print: "Please answer following questions to generate the project:"
+  - prompt:
+      message: "What is the project's name?"
+      default: :project_name
+      property: project_name
+
+- target:      generate
+  depends:     prompt
+  description: "Generate project"
+  script:
+  - print: "Generating project..."
+  - rb: |
+      project_name = "bee_#{project_name}" if not project_name =~ /^bee_/
+      error "A directory named '#{project_name}' already exists, aborting" if
+        File.exists?("#{here}/#{project_name}")
+      project_short_name = project_name[4 .. -1]
+  - mkdir: "#{here}/#{project_name}"
+  - erb:
+      src:  "#{base}/package/build.erb"
+      dest: "#{here}/#{project_name}/build.yml"
+  - cp:
+      src:  "#{base}/package/gem_spec.erb"
+      dest: "#{here}/#{project_name}/gem.spec.erb"
+  - cp:
+      src:  "#{base}/package/readme.erb"
+      dest: "#{here}/#{project_name}/readme.erb"
+  - cp:
+      src:  "#{base}/package/license"
+      dest: "#{here}/#{project_name}/LICENSE"
+  - mkdir: "#{here}/#{project_name}/lib"
+  - erb:
+      src:  "#{base}/package/bee_task.erb"
+      dest: "#{here}/#{project_name}/lib/bee_task_#{project_short_name}.rb"
+  - mkdir: "#{here}/#{project_name}/test"
+  - erb:
+      src:  "#{base}/package/test.erb"
+      dest: "#{here}/#{project_name}/test/tc_bee_task_#{project_short_name}.rb"
+  - cp:
+      src:  "#{base}/package/test_suite.rb"
+      dest: "#{here}/#{project_name}/test/ts_#{project_name}.rb"
+  - cp:
+      src:  "#{base}/package/test_build.rb"
+      dest: "#{here}/#{project_name}/test/test_build.rb"
+  - cp:
+      src:  "#{base}/package/test_build_listener.rb"
+      dest: "#{here}/#{project_name}/test/test_build_listener.rb"
+  - erb:
+      src:  "#{base}/package/test_build.erb"
+      dest: "#{here}/#{project_name}/test/build.yml"
+  - mkdir: "#{here}/#{project_name}/egg"
+  - cp:
+      src:  "#{base}/package/egg.yml"
+      dest: "#{here}/#{project_name}/egg/#{project_short_name}.yml"
+  - mkdir: "#{here}/#{project_name}/egg/#{project_short_name}"
+  - cp:
+      src:  "#{base}/package/egg_build.erb"
+      dest: "#{here}/#{project_name}/egg/#{project_short_name}/build.erb"
+  - cp:
+      src:  "#{base}/package/egg_launcher.erb"
+      dest: "#{here}/#{project_name}/egg/#{project_short_name}/launcher.erb"
+  - cp:
+      src:  "#{base}/package/egg_script.rb"
+      dest: "#{here}/#{project_name}/egg/#{project_short_name}/script.rb"
+
+- target:      customization
+  depends:     generate
+  description: "Print information about project customization"
+  script:
+  - print: |
+      Project has been generated in directory '#{project_name}'. Please edit
+      build file '#{project_name}/build.yml' and customize properties that are
+      not set (with a value '~'). Type 'bee -b' to print information about
+      generated build file.
+      Enjoy!
+
+- target:  all
+  depends: [welcome, prompt, generate, customization]

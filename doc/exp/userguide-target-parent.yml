@@ -1,0 +1,3 @@
+- target: test
+  script:
+  - print: "Target 'test' in parent"

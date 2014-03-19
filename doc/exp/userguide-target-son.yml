@@ -1,0 +1,8 @@
+- build: test
+  extends: userguide-target-parent.yml
+
+- target: test
+  script:
+  - print: "Target 'test' in extending build"
+  - super:
+  - print: "Target 'test' again in extending build"

@@ -1,0 +1,32 @@
+# Build info
+- build: <%= name %>
+  default: all
+  description: Build file for the sample script project
+
+# Build properties
+- properties:
+    name:        "<%= name %>"
+    version:     "0.0.1"
+    build:       "build"
+    clean_dirs:  [:build]
+    clean_files: ["**/*~", "**/.#*", "**/.DS_Store"]
+
+# Build targets
+- target: zip
+  description: Generate ZIP distribution archive
+  script:
+  - mkdir: :build
+  - zip:
+      excludes: "#{build}/**/*"
+      prefix:   "#{name}-#{version}"
+      dest:     "#{build}/#{name}-#{version}.zip"
+
+- target: clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files
+
+- target: all
+  depends: [clean, zip]
+  description: Generate the whole project

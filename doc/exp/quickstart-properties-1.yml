@@ -1,0 +1,6 @@
+- properties:
+    user_name: "World"
+
+- target: hello
+  script:
+  - print: "Hello #{user_name}!"

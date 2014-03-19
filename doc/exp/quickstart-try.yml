@@ -1,0 +1,4 @@
+- try:
+  - "which foo"
+  catch:
+  - print: "Command 'foo' not found"

@@ -1,0 +1,6 @@
+- properties: numbers.yml
+
+- target: count
+  script:
+  - print: "one: #{one}"
+  - print: "two: #{two}"

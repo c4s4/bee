@@ -1,0 +1,45 @@
+- build:       <%= name %>
+  description: Project <%= name %>
+  default:     all
+
+- properties:
+    name:         "<%= name %>"
+    version:      "0.0.1"
+    build:        "build"
+    zip_prefix:   "#{name}-#{version}"
+    zip_file:     "#{build}/#{zip_prefix}.zip"
+    url:          "http://localhost:4567/hello"
+    clean_dirs:   [:build]
+    clean_files:  ["**/*~", "**/.#*", "**/.DS_Store"]
+
+- target:      run
+  description: Run server
+  script:
+  - "./server.rb"
+
+- target:      call
+  description: Call server
+  script:
+  - http_get:
+      url:  "#{url}/World"
+      prop: response
+  - print: :response
+
+- target:      zip
+  description: Generate a ZIP archive
+  script:
+  - mkdir: :build
+  - zip:
+      includes: "server.rb"
+      prefix:   :zip_prefix
+      dest:     :zip_file
+
+- target:      clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files
+
+- target:      all
+  depends:     [clean, zip]
+  description: Generate the whole project

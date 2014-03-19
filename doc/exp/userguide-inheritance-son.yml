@@ -1,0 +1,14 @@
+- build:       test
+  description: Build file using the one to clean build directory
+  extends:     userguide-inheritance-parent.yml
+
+- properties:
+    build: "target"
+
+- target:      compile
+  depends:     clean
+  description: Compile my source file
+  script:
+  - mkdir: :build
+  - print: "Compiling my source file..."
+  - touch: "#{build}/test.class"

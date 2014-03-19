@@ -1,0 +1,3 @@
+- while: nb_sarah_connor > 0
+  do:
+  - terminate:

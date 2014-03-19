@@ -1,0 +1,11 @@
+- properties:
+    user_name: "#{ENV['USER']}"
+
+- target: hello
+  depends: capitalize
+  script:
+  - print: "Hello #{user_name}!"
+
+- target: capitalize
+  script:
+  - rb: "user_name.capitalize!"

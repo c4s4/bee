@@ -1,0 +1,3 @@
+- target: test
+  script:
+  - 'echo "Hello World!"'

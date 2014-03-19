@@ -1,0 +1,58 @@
+- build: hello
+  description: "Project to generate a gem for a Ruby script"
+  default: all
+
+- properties:
+    name: hello
+    version: 0.0.1
+    build: build
+    gem_spec: "#{build}/gem_spec"
+    gem_erb: |
+      require 'rubygems'
+      remove_const(:SPEC) if defined?(SPEC)
+      SPEC = Gem::Specification.new do |spec|
+        spec.name = '<%= name %>'
+        spec.version = '0.0.1'
+        spec.platform = 'ruby'
+        spec.summary = 'summary'
+        spec.author = 'author'
+        spec.email = 'email'
+        spec.homepage = 'homepage'
+        spec.rubyforge_project = 'rubyforge project'
+        spec.require_path = 'lib'
+        spec.files = Dir.glob('{bin,lib}/*')
+        spec.has_rdoc = true
+        spec.executables = ['<%= name %>']
+      end
+
+- target: gem
+  description: "Generate gem archive"
+  script:
+  - mkdir: :build
+  - erb:
+      source: :gem_erb
+      dest:   :gem_spec
+  - gem: :gem_spec
+  - mv:
+      src:  "*.gem"
+      dest: :build
+
+- target: install
+  depends: gem
+  description: Install generated gem
+  script:
+  - "sudo gem install #{build}/#{name}-#{version}.gem"
+
+- target: uninstall
+  description: Uninstall gem
+  script:
+  - "sudo gem uninstall -x #{name}"
+
+- target: clean
+  description: Clean generated files
+  script:
+  - rmdir: :build
+
+- target: all
+  depends: [clean, gem, install]
+  description: Generate and install the gem
