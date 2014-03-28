@@ -94,7 +94,7 @@ module Bee
       #  - prompt:
       #      message:  "Enter your age"
       #      property: "age"
-      #      default:  18
+      #      default:  "18"
       #      pattern:  "^\\d+$"
       #      error:    "Age must be a positive integer"
       def prompt(params)
