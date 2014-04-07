@@ -72,14 +72,17 @@ module Bee
         names = [nil] + Bee::Util::find_gems(/^bee_/).map {|gem| gem.name[4..-1]}
         tasks = []
         for name in names
-          package = self.load_package(name)
-          methods = package.class.public_instance_methods(false)
-          if name
-            methods.map! {|method| "#{name}.#{method}"}
-          else
-            methods.map! {|method| method.to_s}
+          begin
+            package = self.load_package(name)
+            methods = package.class.public_instance_methods(false)
+            if name
+              methods.map! {|method| "#{name}.#{method}"}
+            else
+              methods.map! {|method| method.to_s}
+            end
+            tasks += methods
+          rescue Exception
           end
-          tasks += methods
         end
         return tasks.sort
       end

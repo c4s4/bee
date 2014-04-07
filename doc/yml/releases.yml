@@ -4,6 +4,7 @@
   fixed:
   - "Dependency on rubyzip fixed to < 1.0.0 so that it works
      on Ruby 1.8."
+  - "Fixed tasks list when a gem doesn't have tasks (such as bee_doc)."
 
 - release:     0.12.1
   date:        2013-09-12
