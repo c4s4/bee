@@ -181,9 +181,11 @@
 # other convenient targets
 - target:      publish
   depends:     doc
-  description: Publish documentation on RubyForge
+  description: Publish documentation on Sweetohm
   script:
-  - "scp -r #{doc_dir}/* #{home_user}@#{home_host}:#{home_dir}/"
+  - copy:
+      root: :doc_dir
+      dest: /home/web/bee/
 
 - target:      push
   depends:     [clean, gem]
