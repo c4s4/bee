@@ -1,4 +1,4 @@
-# Copyright 2006-2012 Michel Casabianca <michel.casabianca@gmail.com>
+# Copyright 2006-2014 Michel Casabianca <michel.casabianca@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 # Build info
 - build: bee
-  default: all
   context: build.rb
   description: |
     "This is the build file to generate bee's distribution archives and
@@ -28,11 +27,24 @@
     sample Unix scripts that must run on generating platform, thus they
     can't generate ZIP archive neither but can run unit tests and 
     generate gem."
+  default:
+  - clean
+  - test
+  alias:
+    release:
+    - clean
+    - checks
+    - test
+    - doc
+    - gem
+    - tag
+    - push
+    - publish
 
 # Build properties
 - properties:
     name:         "bee"
-    version:      "0.12.1"
+    version:      "0.12.2"
     author:       "Michel Casabianca & Contributors"
     years:        "2006-2014"
     platform:     "Gem::Platform::RUBY"
@@ -146,26 +158,6 @@
   - cp: { src: :api_dir, dest: :doc_dir }
   - cp: { src: :coverage_dir, dest: :doc_dir }
 
-- target:      zip
-  depends:     [gem, doc]
-  description: Generate ZIP distribution archive
-  script:
-  - zip:
-      includes: [:readme_file, :license_file]
-      prefix:   :zip_prefix
-      dest:     :zip_archive
-  - zip:
-      root:     :build_dir
-      includes: "*.gem"
-      prefix:   "#{zip_prefix}/gem"
-      dest:     :zip_archive
-  - zip:
-      root:     :doc_dir
-      includes: "**/*"
-      prefix:   "#{zip_prefix}/doc"
-      dest:     :zip_archive
-
-# other convenient targets
 - target:      publish
   depends:     doc
   description: Publish documentation on Sweetohm
@@ -207,13 +199,6 @@
   - if: "Date.today != releases[0]['date']"
     then:
     - throw: "Date in release note is not today"
-
-- target:      release
-  depends:     [clean, checks, test, doc, gem, zip, tag, push, publish]
-  description: Release Bee, running test, generating doc, generating gem,
-               sending it to GemCutter and publishing doc on RubyForge
-  script:
-  - print: "!!! Don't forget to send gem and zip to RubyForge !!!"
 
 - target:      install
   depends:     gem
