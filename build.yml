@@ -34,7 +34,7 @@
     name:         "bee"
     version:      "0.12.1"
     author:       "Michel Casabianca & Contributors"
-    years:        "2006-2012"
+    years:        "2006-2014"
     platform:     "Gem::Platform::RUBY"
     summary:      "Bee is a build tool"
     description:  "Bee is a build tool the way it should bee!"
@@ -64,7 +64,7 @@
     doc_files:    ["doc/img/*.png", "doc/img/*.gif", 
                   "doc/css/*.css", "doc/exp/*.zip", "doc/pdf/*.pdf"]
     rdoc_files:   [:readme_file, :license_file, "#{lib_dir}/*.rb"]
-    zip_excludes: ["**/CVS", "**/.DS_Store", "**/*~"]
+    zip_excludes: [".git/**", "**/.DS_Store", "**/*~"]
     zip_prefix:   "#{name}-#{version}"
     zip_archive:  "#{build_dir}/#{name}-#{version}.zip"
     tasks_ref:    "#{build_dir}/tasks-reference.rdoc"
@@ -73,16 +73,11 @@
     rcov_windows: "c:/ruby/bin/rcov.cmd"
     rcov:         "#{if RUBY_PLATFORM =~ /win32/; rcov_windows else rcov_unix end}"
     coverage_dir: "#{build_dir}/coverage"
-    home_user:    "casa"
-    home_host:    "rubyforge.org"
-    home_dir:     "/var/www/gforge-projects/bee"
+    web_dir:      "/home/web/bee/"
     clean_dirs:   [:build_dir]
     clean_files:  ["**/*~", "**/.#*", "**/.DS_Store", 
                    :version_file, :readme_file, :gem_spec]
-    status_cmd:   "cvs status 2> /dev/null | grep 'Locally Modified'"
-    cvs_tag:      "RELEASE-#{version.gsub(/\./, '-')}"
-    statcvs_home: "/opt/misc/statcvs-0.4.0"
-    statcvs_rep:  "#{build_dir}/statcvs"
+    git_tag:      "RELEASE-#{version}"
     # tells if we should run tests that need network
     net_test:     false
 
@@ -185,7 +180,7 @@
   script:
   - copy:
       root: :doc_dir
-      dest: /home/web/bee/
+      dest: :web_dir
 
 - target:      push
   depends:     [clean, gem]
@@ -197,9 +192,10 @@
   description: Tag the release and check that there are no uncommited changes
   script:
   - print: "Checking uncommited changes"
-  - rb: "error 'There are uncommited changes' if `#{status_cmd}`.length > 0"
-  - print: "Tagging project '#{cvs_tag}'"
-  - "cvs tag #{cvs_tag}"
+  - rb: "error 'There are uncommited changes' if `git diff`.length > 0"
+  - print: "Tagging project '#{git_tag}'"
+  - "git tag -a '#{git_tag}' -m 'Release #{version}'"
+  - "git push --tags"
 
 - target:      checks
   description: Checks before release (no uncommitted changes, version number
@@ -207,7 +203,7 @@
                note is current day)
   script:
   - print: "Checking uncommitted changes..."
-  - if: "`cvs -n -q update`.length > 0"
+  - if: "`git diff`.length > 0"
     then:
     - throw: "There are uncommitted changes"
   - print: "Checking versions..."
@@ -241,14 +237,6 @@
   - try:
     - "sudo gem uninstall -x #{name}"
     catch:
-
-- target:      stats
-  description: Generate StatCVS report
-  script:
-  - mkdir: :statcvs_rep
-  - print: "Generating CVS logs..."
-  - "cvs log > #{build_dir}/cvs.log 2> /dev/null"
-  - "java -jar #{statcvs_home}/statcvs.jar -output-dir #{statcvs_rep} #{build_dir}/cvs.log #{base}"
 
 - target:      notes
   depends:     clean
