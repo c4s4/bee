@@ -1,0 +1,14 @@
+# Apache configuration file for bee. Put this file in directory:
+# /etc/apache2/sites-available. To enable this site, type :
+# 
+#   sudo a2ensite bee
+# 
+# To disable it:
+# 
+#   sudo a2dissite bee
+
+Alias /bee/ /home/web/bee/
+<Directory /home/web/bee/>
+    Options +Indexes
+</Directory>
+
