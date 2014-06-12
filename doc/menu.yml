@@ -25,9 +25,13 @@
   file: ../LICENSE
   dest: license.html
 
+- title: GemCutter
+  type: link
+  dest: http://gemcutter.org/gems/bee
+
 - title: Downloads
   type: link
-  dest: http://rubyforge.org/frs/?group_id=2479
+  dest: downloads/
 
 - title: Documentation
   type: section
@@ -80,6 +84,22 @@
 - title: Project
   type: section
 
+- title: GIT Repository
+  type: link
+  dest: https://github.com/c4s4/bee
+
+- title: Releases
+  type: yaml
+  file: yml/releases.yml
+  erb: erb/releases.erb
+  dest: releases.html
+
+- title: Contributors
+  type: yaml
+  file: yml/contributors.yml
+  erb: erb/contributors.erb
+  dest: contributors.html
+
 - title: Source API
   type: dir
   dir: ../build/api/
@@ -90,43 +110,8 @@
   dir: ../build/coverage/
   dest: coverage
 
-- title: CVS Repository
-  type: link
-  dest: http://rubyforge.org/scm/?group_id=2479
-
-- title: Project Page
-  type: link
-  dest: http://rubyforge.org/projects/bee/
-
-- title: GemCutter
-  type: link
-  dest: http://gemcutter.org/gems/bee
-
-- title: Releases
-  type: yaml
-  file: yml/releases.yml
-  erb: erb/releases.erb
-  dest: releases.html
-
 - title: Bugs
   type: yaml
   file: yml/bugs.yml
   erb: erb/bugs.erb
   dest: bugs.html
-
-- title: Contributing
-  type: section
-
-- title: Contributors
-  type: yaml
-  file: yml/contributors.yml
-  erb: erb/contributors.erb
-  dest: contributors.html
-
-- title: Mailing Lists
-  type: link
-  dest: http://rubyforge.org/mail/?group_id=2479
-
-- title: Forums
-  type: link
-  dest: http://rubyforge.org/forum/?group_id=2479
