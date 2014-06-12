@@ -31,7 +31,7 @@
 
 - title: Downloads
   type: link
-  dest: downloads/
+  dest: https://github.com/c4s4/bee/releases
 
 - title: Documentation
   type: section
