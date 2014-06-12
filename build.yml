@@ -73,7 +73,9 @@
     rcov_windows: "c:/ruby/bin/rcov.cmd"
     rcov:         "#{if RUBY_PLATFORM =~ /win32/; rcov_windows else rcov_unix end}"
     coverage_dir: "#{build_dir}/coverage"
-    web_dir:      "/home/web/bee/"
+    home_user:    "casa"
+    home_host:    "sweetohm.net"
+    home_dir:     "/home/web/bee/"
     clean_dirs:   [:build_dir]
     clean_files:  ["**/*~", "**/.#*", "**/.DS_Store", 
                    :version_file, :readme_file, :gem_spec]
@@ -163,24 +165,12 @@
       prefix:   "#{zip_prefix}/doc"
       dest:     :zip_archive
 
-- target:      clean
-  description: Clean generated files
-  script:
-  - rmdir: :clean_dirs
-  - rm:    :clean_files
-
-- target:      all
-  depends:     [clean, gem]
-  description: Generate the whole project
-
 # other convenient targets
 - target:      publish
   depends:     doc
   description: Publish documentation on Sweetohm
   script:
-  - copy:
-      root: :doc_dir
-      dest: :web_dir
+  - "scp -r #{doc_dir}/* #{home_user}@#{home_host}:#{home_dir}"
 
 - target:      push
   depends:     [clean, gem]
@@ -244,3 +234,8 @@
   script:
   - rb: "print_notes('.')"
 
+- target:      clean
+  description: Clean generated files
+  script:
+  - rmdir: :clean_dirs
+  - rm:    :clean_files

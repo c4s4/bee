@@ -1,10 +1,12 @@
-- release:     0.?.?
-  date:        2014-??-??
-  description: ???
+- release:     0.12.2
+  date:        2014-06-13
+  description: Bug fix release
   fixed:
   - "Dependency on rubyzip fixed to < 1.0.0 so that it works
      on Ruby 1.8."
   - "Fixed tasks list when a gem doesn't have tasks (such as bee_doc)."
+  notes:
+  - "First release after migration from rubyforge to github."
 
 - release:     0.12.1
   date:        2013-09-12
