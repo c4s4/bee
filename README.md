@@ -3,7 +3,7 @@ bee
 
 ![Nice Bee](http://sweetohm.net/bee/home-title.png)
 
-bee is a build tool running YAML build files à la Ant (but with a Shopping List syntax), which won't bother you with writing code when not necessary and happens to be as fast as Make. These build files are thin layers around cripts written in Shell, Ruby or bee tasks for platform independant builds (feature currently under development).
+bee is a build tool running YAML build files Ã  la Ant (but with a Shopping List syntax), which won't bother you with writing code when not necessary and happens to be as fast as Make. These build files are thin layers around cripts written in Shell, Ruby or bee tasks for platform independant builds (feature currently under development).
 
 Documentation
 -------------
@@ -18,5 +18,4 @@ bee is Open Source and released under the [Apache License](http://www.apache.org
 Copyright
 ---------
 
-bee is Copyright Michel Casabianca and Contributors.
-
+bee is Copyright Michel Casabianca and [Contributors](http://sweetohm.net/bee/contributors.html).
