@@ -32,14 +32,10 @@
   - test
   alias:
     release:
-    - clean
     - checks
-    - test
-    - doc
-    - gem
-    - tag
     - push
     - publish
+    - tag
 
 # Build properties
 - properties:
