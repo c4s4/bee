@@ -14,7 +14,7 @@
 
 # Build info
 - build: bee
-  context: build.rb
+  context: misc/build.rb
   description: |
     "This is the build file to generate bee's distribution archives and
     publish documentation on RubyForge. To generate documentation, you
@@ -64,10 +64,10 @@
     doc_dir:      "#{build_dir}/doc"
     version_file: "#{lib_dir}/bee_version.rb"
     readme_file:  "README"
-    readme_erb:   "README.erb"
+    readme_erb:   "misc/README.erb"
     license_file: "LICENSE"
     gem_spec:     "gem.spec"
-    gem_spec_erb: "gem.spec.erb"
+    gem_spec_erb: "misc/gem.spec.erb"
     gem_package:  "#{name}-#{version}.gem"
     doc_files:    ["doc/img/*.png", "doc/img/*.gif", 
                   "doc/css/*.css", "doc/exp/*.zip", "doc/pdf/*.pdf"]
